@@ -1,0 +1,17 @@
+dist
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+.virthualenv
+.hpc
+.hsenv_*
+dist_*
+history
+TAGS
+/cabal.sandbox.config
+/.cabal-sandbox/
+*.prof
+*.hp
+*.aux
