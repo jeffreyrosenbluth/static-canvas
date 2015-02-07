@@ -75,7 +75,7 @@ data Canvas r
   | StrokeRect !Double !Double !Double !Double r
   | StrokeStyle Style r
   | StrokeText Text !Double !Double r
-  -- | TextAlign
+  | TextAlign TextAlignStyle r
   -- | TextBaseLine
   | Transform !Double !Double !Double !Double !Double !Double r
   | Translate !Double !Double r
@@ -101,6 +101,13 @@ data LineJoinStyle
   = LineJoinMiter
   | LineJoinRound
   | LineJoinBevel
+    
+data TextAlignStyle
+  = TextAlignStart
+  | TextAlignEnd
+  | TextAlignCenter
+  | TextAlignLeft
+  | TextAlignRight
     
 evalScript :: CanvasFree a -> Builder
 evalScript c = (evalState . execWriterT . runScript . eval . fromF) c 0
@@ -143,14 +150,21 @@ jsStyle (GradientStyle (LG n)) = "gradient_" <> (fromText . pack . show $ n)
 jsStyle (GradientStyle (RG n)) = "gradient_" <> (fromText . pack . show $ n)
 
 jsLineCap :: LineCapStyle -> Builder
-jsLineCap LineCapButt = "butt"
-jsLineCap LineCapRound = "round"
+jsLineCap LineCapButt   = "butt"
+jsLineCap LineCapRound  = "round"
 jsLineCap LineCapSquare = "square"
 
 jsLineJoin :: LineJoinStyle -> Builder
 jsLineJoin LineJoinMiter = "miter"
 jsLineJoin LineJoinRound = "round"
 jsLineJoin LineJoinBevel = "bevel"
+
+jsTextAlign :: TextAlignStyle -> Builder
+jsTextAlign TextAlignStart  = "start"
+jsTextAlign TextAlignEnd    = "end"
+jsTextAlign TextAlignCenter = "center"
+jsTextAlign TextAlignLeft   = "left"
+jsTextAlign TextAlignRight  = "right"
 
 --------------------------------------------------------------------------------
 
@@ -299,8 +313,11 @@ eval (Free (StrokeRect a1 a2 a3 a4 c)) = do
 eval (Free (StrokeStyle a1 c)) = do
   record ["ctx.strokeStyle = ('", jsStyle a1, "');"]
   eval c
-eval (Free (StrokeText a1 a2 a3 c)) =do
+eval (Free (StrokeText a1 a2 a3 c)) = do
   record ["ctx.strokeText(", fromText a1, comma, jsDouble a2, comma, jsDouble a3, ");"]
+  eval c
+eval (Free (TextAlign a1 c)) = do
+  record ["ctx.textAlign = ('", jsTextAlign a1, "');"]
   eval c
 eval (Free (Transform a1 a2 a3 a4 a5 a6 c)) = do
   record ["ctx.transform("

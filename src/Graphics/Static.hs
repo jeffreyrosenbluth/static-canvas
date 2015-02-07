@@ -21,6 +21,10 @@ import Data.Text                   (Text)
 import Graphics.Static.Internal
 import Control.Monad.Free          (liftF)
 
+-------------------------------------------------------------------------------
+-- The DSL
+-------------------------------------------------------------------------------
+
 addColorStop :: Double -> Color -> Style -> CanvasFree ()
 addColorStop a1 a2 a3 = liftF $ AddColorStop a1 a2 a3 ()
 
@@ -132,6 +136,9 @@ strokeRect a1 a2 a3 a4 = liftF $ StrokeRect a1 a2 a3 a4 ()
 strokeStyle :: Style -> CanvasFree ()
 strokeStyle a1 = liftF $ StrokeStyle a1 ()
 
+textAlign :: TextAlignStyle -> CanvasFree ()
+textAlign a1 = liftF $ TextAlign a1 ()
+                 
 transform :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree ()
 transform a1 a2 a3 a4 a5 a6 = liftF $ Transform a1 a2 a3 a4 a5 a6 ()
 
