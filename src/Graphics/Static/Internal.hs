@@ -44,7 +44,7 @@ data Canvas r
   -- | DrawImage8
   | Fill r
   | FillRect !Double !Double !Double !Double r
-  -- | FillStyle
+  | FillStyle Style r
   | FillText Text !Double !Double r
   -- | Font
   | GlobalAlpha !Double r
@@ -73,7 +73,7 @@ data Canvas r
   | ShadowOffsetY !Double r
   | Stroke r
   | StrokeRect !Double !Double !Double !Double r
-  -- | StrokeStyle
+  | StrokeStyle Style r
   | StrokeText Text !Double !Double r
   -- | TextAlign
   -- | TextBaseLine
@@ -84,6 +84,11 @@ data Canvas r
 data Color = Hex  Text
            | RGB  !Int !Int !Int
            | RGBA !Int !Int !Int !Double
+
+data Gradient = LG !Int
+              | RG !Int
+
+data Style = ColorStyle Color | GradientStyle Gradient
 
 
 evalScript :: CanvasFree a -> Builder
@@ -121,6 +126,10 @@ jsColor (RGBA r g b a) = "rgba(" <> (fromText . pack $ show r)
                       <> comma   <> (fromText . pack $ show b)
                       <> comma   <> (jsDouble a) <> singleton ')'
 
+jsStyle :: Style -> Builder
+jsStyle (ColorStyle c) = jsColor c
+jsStyle (GradientStyle (LG n)) = "gradient_" <> (fromText . pack . show $ n)
+jsStyle (GradientStyle (RG n)) = "gradient_" <> (fromText . pack . show $ n)
 
 --------------------------------------------------------------------------------
 
@@ -168,6 +177,9 @@ eval (Free (FillRect a1 a2 a3 a4 c)) = do
   record ["ctx.fillRect("
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, ");"]
+  eval c
+eval (Free (FillStyle a1 c)) = do
+  record ["ctx.fillStyle(", jsStyle a1, ");"]
   eval c
 eval (Free (FillText a1 a2 a3 c)) = do
   record ["ctx.fillText(", fromText a1, comma
@@ -253,6 +265,9 @@ eval (Free (StrokeRect a1 a2 a3 a4 c)) = do
   record ["ctx.strokeRect("
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, ");"]
+  eval c
+eval (Free (StrokeStyle a1 c)) = do
+  record ["ctx.strokeStyle(", jsStyle a1, ");"]
   eval c
 eval (Free (StrokeText a1 a2 a3 c)) =do
   record ["ctx.strokeText(", fromText a1, comma, jsDouble a2, comma, jsDouble a3, ");"]
