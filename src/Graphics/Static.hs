@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.Static
@@ -14,19 +16,47 @@ module Graphics.Static
   , Style(..)
   , Color(..)
   , Gradient(..)
+  , CanvasFree
   , evalScript
   ) where
 
-import Control.Monad.Free           (liftF)
-import Data.Text                    (Text)
+import Control.Monad.Free          (liftF)
+import Data.Monoid
+import Prelude                     hiding (writeFile)
+import Data.Text                   (Text)
+import Data.Text.Lazy.Builder      (Builder, toLazyText)
+import Data.Text.Lazy.IO           (writeFile) 
 import Graphics.Static.Interpreter
+import Graphics.Static.Javascript
 import Graphics.Static.Types
+
+writeCanvasDoc :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
+writeCanvasDoc path w h canvas = writeFile path (toLazyText $ buildDoc w h canvas)
+
+writeCanvasScript :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
+writeCanvasScript path w h canvas = writeFile path (toLazyText $ buildScript w h canvas)
+
+buildDoc :: Int -> Int -> CanvasFree () -> Builder
+buildDoc w h canvas
+  =  "<!DOCTYPE HTML><html><body>"
+  <> (buildScript w h canvas)
+  <> "</body></html>"
+
+buildScript :: Int -> Int -> CanvasFree () -> Builder
+buildScript w h canvas
+  =  "<canvas id=\"theStaticCanvas\" width=\"" <> jsInt w
+  <> "\" height=\"" <> jsInt h <> "\"></canvas>"
+  <> "<script>"
+  <> "var canvas = document.getElementById('theStaticCanvas');"
+  <> "var ctx = canvas.getContext('2d');"
+  <> (evalScript canvas)
+  <> "</script>"
 
 -------------------------------------------------------------------------------
 -- The DSL
 -------------------------------------------------------------------------------
 
-addColorStop :: Double -> Color -> Style -> CanvasFree ()
+addColorStop :: Int -> Color -> Style -> CanvasFree ()
 addColorStop a1 a2 a3 = liftF $ AddColorStop a1 a2 a3 ()
 
 arc :: Double -> Double -> Double -> Double -> Double -> Bool -> CanvasFree ()

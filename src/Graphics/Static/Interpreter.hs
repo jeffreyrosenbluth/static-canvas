@@ -41,7 +41,7 @@ eval :: Free Canvas a -> Script a
 
 eval (Free (AddColorStop a1 a2 a3 c)) = do
   record [jsStyle a3, ".addColorStop("
-         , jsDouble a1, comma, singleton '\'', jsColor a2, "');"]
+         , jsInt a1, comma, jsColor a2, ");"]
   eval c
 
 eval (Free (Arc a1 a2 a3 a4 a5 a6 c)) = do
@@ -94,7 +94,7 @@ eval (Free (FillRect a1 a2 a3 a4 c)) = do
   eval c
 
 eval (Free (FillStyle a1 c)) = do
-  record ["ctx.fillStyle = ('", jsStyle a1, "');"]
+  record ["ctx.fillStyle = (", jsStyle a1, ");"]
   eval c
 
 eval (Free (FillText a1 a2 a3 c)) = do
@@ -117,7 +117,7 @@ eval (Free (GlobalCompositeOperation a1 c)) = do
 
 eval (Free (LinearGradient a1 a2 a3 a4 k)) = do
   i <- inc
-  record ["var gradient_", jsInt i, " = ctx.creatLinearGradient("
+  record ["var gradient_", jsInt i, " = ctx.createLinearGradient("
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval (k (GradientStyle (LG i)))
@@ -154,7 +154,7 @@ eval (Free (QuadraticCurveTo a1 a2 a3 a4 c)) = do
 
 eval (Free (RadialGradient a1 a2 a3 a4 a5 a6 k)) = do
   i <- inc
-  record ["var gradient_", jsInt i, " = ctx.creatRadialGradient("
+  record ["var gradient_", jsInt i, " = ctx.createRadialGradient("
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, comma
          , jsDouble a5, comma, jsDouble a6, ");"]
@@ -217,7 +217,7 @@ eval (Free (StrokeRect a1 a2 a3 a4 c)) = do
   eval c
 
 eval (Free (StrokeStyle a1 c)) = do
-  record ["ctx.strokeStyle = ('", jsStyle a1, "');"]
+  record ["ctx.strokeStyle = (", jsStyle a1, ");"]
   eval c
 
 eval (Free (StrokeText a1 a2 a3 c)) = do

@@ -3,10 +3,9 @@
 module Main where
 
 import Graphics.Static
-import Data.Text.Lazy.Builder
 
-rectangle :: Builder
-rectangle = evalScript $ do
+rectangle :: CanvasFree ()
+rectangle = do
   beginPath
   rect 188 50 200 100
   fillStyle (ColorStyle (Hex ("#FFD700")))
@@ -16,4 +15,4 @@ rectangle = evalScript $ do
   stroke
 
 main :: IO ()
-main = print $ toLazyText rectangle
+main = writeCanvasDoc "Rectangle.html" 400 400 rectangle

@@ -25,6 +25,9 @@ build = fromText .pack . show
 comma :: Builder
 comma = singleton ','
 
+quote :: Builder -> Builder
+quote b = singleton '\'' <> b <> singleton '\''
+
 jsBool :: Bool -> Builder
 jsBool True = "true"
 jsBool False = "false"
@@ -36,11 +39,11 @@ jsDouble :: Double -> Builder
 jsDouble = fromText . toFixed 4
 
 jsColor :: Color -> Builder
-jsColor (Hex t)        = fromText t
-jsColor (RGB r g b)    = "rgb("  <> (build r)
+jsColor (Hex t)        = quote . fromText $ t
+jsColor (RGB r g b)    = quote $ "rgb("  <> (build r)
                       <> comma   <> (build g)
                       <> comma   <> (build b) <> singleton ')'
-jsColor (RGBA r g b a) = "rgba(" <> (build r)
+jsColor (RGBA r g b a) = quote $ "rgba(" <> (build r)
                       <> comma   <> (build g)
                       <> comma   <> (build b)
                       <> comma   <> (jsDouble a) <> singleton ')'

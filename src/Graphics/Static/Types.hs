@@ -28,7 +28,7 @@ newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
 type CanvasFree = F Canvas
 
 data Canvas r
-  = AddColorStop !Double Color Style r
+  = AddColorStop !Int Color Style r
   | Arc !Double !Double !Double !Double !Double !Bool r
   | ArcTo !Double !Double !Double !Double !Double r
   | BeginPath r
