@@ -21,7 +21,7 @@ import Data.Text                   (Text)
 import Graphics.Static.Internal
 import Control.Monad.Free          (liftF)
 
-addColorStop :: Double -> Color -> Int -> CanvasFree ()
+addColorStop :: Double -> Color -> Style -> CanvasFree ()
 addColorStop a1 a2 a3 = liftF $ AddColorStop a1 a2 a3 ()
 
 arc :: Double -> Double -> Double -> Double -> Double -> Bool -> CanvasFree ()
@@ -57,14 +57,23 @@ fillStyle a1 = liftF $ FillStyle a1 ()
 fillText :: Text -> Double -> Double -> CanvasFree ()
 fillText a1 a2 a3 = liftF $ FillText a1 a2 a3 ()
 
+font :: Text -> CanvasFree ()
+font a1 = liftF $ Font a1 ()
+
 globalAlpha :: Double -> CanvasFree ()
 globalAlpha a1 = liftF $ GlobalAlpha a1 ()
 
 globalCompositeOperation :: Text -> CanvasFree ()
 globalCompositeOperation a1 = liftF $ GlobalCompositeOperation a1 ()
 
-linearGradient :: Double -> Double -> Double -> Double -> CanvasFree Int
-linearGradient a1 a2 a3 a4 = liftF $ LinearGradient a1 a2 a3 a4 id
+createLinearGradient :: Double -> Double -> Double -> Double -> CanvasFree Style
+createLinearGradient a1 a2 a3 a4 = liftF $ LinearGradient a1 a2 a3 a4 id
+
+lineCap :: LineCapStyle -> CanvasFree ()
+lineCap a1 = liftF $ LineCap a1 ()
+
+lineJoin :: LineJoinStyle -> CanvasFree ()
+lineJoin a1 = liftF $ LineJoin a1 ()
 
 lineTo :: Double -> Double -> CanvasFree ()
 lineTo a1 a2 = liftF $ LineTo a1 a2 ()
@@ -81,8 +90,8 @@ moveTo a1 a2 = liftF $ MoveTo a1 a2 ()
 quadraticCurveTo :: Double -> Double -> Double -> Double -> CanvasFree ()
 quadraticCurveTo a1 a2 a3 a4 = liftF $ QuadraticCurveTo a1 a2 a3 a4 ()
 
-radialGradient :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree Int
-radialGradient a1 a2 a3 a4 a5 a6 = liftF $ RadialGradient a1 a2 a3 a4 a5 a6 id
+createRadialGradient :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree Style
+createRadialGradient a1 a2 a3 a4 a5 a6 = liftF $ RadialGradient a1 a2 a3 a4 a5 a6 id
 
 rect :: Double -> Double -> Double -> Double -> CanvasFree ()
 rect a1 a2 a3 a4 = liftF $ Rect a1 a2 a3 a4 ()

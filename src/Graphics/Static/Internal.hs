@@ -30,7 +30,7 @@ newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
 type CanvasFree = F Canvas
 
 data Canvas r
-  = AddColorStop !Double Color !Int r
+  = AddColorStop !Double Color Style r
   | Arc !Double !Double !Double !Double !Double !Bool r
   | ArcTo !Double !Double !Double !Double !Double r
   | BeginPath r
@@ -46,12 +46,12 @@ data Canvas r
   | FillRect !Double !Double !Double !Double r
   | FillStyle Style r
   | FillText Text !Double !Double r
-  -- | Font
+  | Font Text r
   | GlobalAlpha !Double r
   | GlobalCompositeOperation Text r
-  | LinearGradient !Double !Double !Double !Double (Int -> r)
-  -- | LineCap
-  -- | LineJoin
+  | LinearGradient !Double !Double !Double !Double (Style -> r)
+  | LineCap LineCapStyle r
+  | LineJoin LineJoinStyle r
   | LineTo !Double !Double r
   | LineWidth !Double r
   | MiterLimit !Double r
@@ -60,7 +60,7 @@ data Canvas r
   -- | PutImageData2
   -- | PutImageData6
   | QuadraticCurveTo !Double !Double !Double !Double r
-  | RadialGradient !Double !Double !Double !Double !Double !Double (Int -> r)
+  | RadialGradient !Double !Double !Double !Double !Double !Double (Style -> r)
   | Rect !Double !Double !Double !Double r
   | Restore r
   | Rotate !Double r
@@ -81,16 +81,27 @@ data Canvas r
   | Translate !Double !Double r
     deriving Functor
 
-data Color = Hex  Text
-           | RGB  !Int !Int !Int
-           | RGBA !Int !Int !Int !Double
+data Color
+  = Hex  Text
+  | RGB  !Int !Int !Int
+  | RGBA !Int !Int !Int !Double
 
-data Gradient = LG !Int
-              | RG !Int
+data Gradient
+  = LG !Int
+  | RG !Int
 
 data Style = ColorStyle Color | GradientStyle Gradient
 
+data LineCapStyle
+  = LineCapButt
+  | LineCapRound
+  | LineCapSquare
 
+data LineJoinStyle
+  = LineJoinMiter
+  | LineJoinRound
+  | LineJoinBevel
+    
 evalScript :: CanvasFree a -> Builder
 evalScript c = (evalState . execWriterT . runScript . eval . fromF) c 0
 
@@ -117,7 +128,7 @@ jsDouble :: Double -> Builder
 jsDouble = fromText . toFixed 4
 
 jsColor :: Color -> Builder
-jsColor (Hex t) = singleton '\'' <> fromText t <> singleton '\''
+jsColor (Hex t)        = fromText t
 jsColor (RGB r g b)    = "rgb("  <> (fromText . pack $ show r)
                       <> comma   <> (fromText . pack $ show g)
                       <> comma   <> (fromText . pack $ show b) <> singleton ')'
@@ -131,11 +142,21 @@ jsStyle (ColorStyle c) = jsColor c
 jsStyle (GradientStyle (LG n)) = "gradient_" <> (fromText . pack . show $ n)
 jsStyle (GradientStyle (RG n)) = "gradient_" <> (fromText . pack . show $ n)
 
+jsLineCap :: LineCapStyle -> Builder
+jsLineCap LineCapButt = "butt"
+jsLineCap LineCapRound = "round"
+jsLineCap LineCapSquare = "square"
+
+jsLineJoin :: LineJoinStyle -> Builder
+jsLineJoin LineJoinMiter = "miter"
+jsLineJoin LineJoinRound = "round"
+jsLineJoin LineJoinBevel = "bevel"
+
 --------------------------------------------------------------------------------
 
 eval :: Free Canvas a -> Script a
 eval (Free (AddColorStop a1 a2 a3 c)) = do
-  record ["gradient_", jsInt a3, ".addColorStop("
+  record [jsStyle a3, ".addColorStop("
          , jsDouble a1, comma, jsColor a2, ");"]
   eval c
 eval (Free (Arc a1 a2 a3 a4 a5 a6 c)) = do
@@ -179,12 +200,15 @@ eval (Free (FillRect a1 a2 a3 a4 c)) = do
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval c
 eval (Free (FillStyle a1 c)) = do
-  record ["ctx.fillStyle = (", jsStyle a1, ");"]
+  record ["ctx.fillStyle = ('", jsStyle a1, "');"]
   eval c
 eval (Free (FillText a1 a2 a3 c)) = do
   record ["ctx.fillText(", fromText a1, comma
          , jsDouble a2, comma
          , jsDouble a3, ");"]
+  eval c
+eval (Free (Font a1 c)) = do
+  record ["ctx.font = ('", fromText a1, "');"]
   eval c
 eval (Free (GlobalAlpha a1 c)) = do
   record ["ctx.globalAlpha = (", jsDouble a1, ");"]
@@ -197,7 +221,13 @@ eval (Free (LinearGradient a1 a2 a3 a4 k)) = do
   record ["var gradient_", jsInt i, " = ctx.creatLinearGradient("
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, ");"]
-  eval (k i)
+  eval (k (GradientStyle (LG i)))
+eval (Free (LineCap a1 c)) = do
+  record ["ctx.lineCap = (", jsLineCap a1, ");"]
+  eval c
+eval (Free (LineJoin a1 c)) = do
+  record ["ctx.lineJoin = (", jsLineJoin a1, ");"]
+  eval c
 eval (Free (LineTo a1 a2 c)) = do
   record ["ctx.lineTo(", jsDouble a1, comma, jsDouble a2, ");"]
   eval c
@@ -221,7 +251,7 @@ eval (Free (RadialGradient a1 a2 a3 a4 a5 a6 k)) = do
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, comma
          , jsDouble a5, comma, jsDouble a6, ");"]
-  eval (k i)
+  eval (k (GradientStyle (RG i)))
 eval (Free (Rect a1 a2 a3 a4 c)) = do
   record ["ctx.rect(", jsDouble a1, comma
                      , jsDouble a2, comma
@@ -267,7 +297,7 @@ eval (Free (StrokeRect a1 a2 a3 a4 c)) = do
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval c
 eval (Free (StrokeStyle a1 c)) = do
-  record ["ctx.strokeStyle = (", jsStyle a1, ");"]
+  record ["ctx.strokeStyle = ('", jsStyle a1, "');"]
   eval c
 eval (Free (StrokeText a1 a2 a3 c)) =do
   record ["ctx.strokeText(", fromText a1, comma, jsDouble a2, comma, jsDouble a3, ");"]
