@@ -17,8 +17,9 @@ module Graphics.Static
   , evalScript
   ) where
 
+import Graphics.Static.Types
+import Graphics.Static.Interpreter
 import Data.Text                   (Text)
-import Graphics.Static.Internal
 import Control.Monad.Free          (liftF)
 
 -------------------------------------------------------------------------------
