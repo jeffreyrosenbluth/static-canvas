@@ -76,7 +76,7 @@ data Canvas r
   | StrokeStyle Style r
   | StrokeText Text !Double !Double r
   | TextAlign TextAlignStyle r
-  -- | TextBaseLine
+  | TextBaseline TextBaselineStyle r
   | Transform !Double !Double !Double !Double !Double !Double r
   | Translate !Double !Double r
     deriving Functor
@@ -90,7 +90,9 @@ data Gradient
   = LG !Int
   | RG !Int
 
-data Style = ColorStyle Color | GradientStyle Gradient
+data Style
+  = ColorStyle Color
+  | GradientStyle Gradient
 
 data LineCapStyle
   = LineCapButt
@@ -108,6 +110,13 @@ data TextAlignStyle
   | TextAlignCenter
   | TextAlignLeft
   | TextAlignRight
+    
+data TextBaselineStyle
+  = TextBaselineTop
+  | TextBaselineHanging
+  | TextBaselineMiddle
+  | TextBaselineIdeographic
+  | TextBaselineBottom
     
 evalScript :: CanvasFree a -> Builder
 evalScript c = (evalState . execWriterT . runScript . eval . fromF) c 0
@@ -165,6 +174,13 @@ jsTextAlign TextAlignEnd    = "end"
 jsTextAlign TextAlignCenter = "center"
 jsTextAlign TextAlignLeft   = "left"
 jsTextAlign TextAlignRight  = "right"
+
+jsTextBaseline :: TextBaselineStyle -> Builder
+jsTextBaseline TextBaselineTop         = "top"
+jsTextBaseline TextBaselineHanging     = "hanging"
+jsTextBaseline TextBaselineMiddle      = "middle"
+jsTextBaseline TextBaselineIdeographic = "ideographic"
+jsTextBaseline TextBaselineBottom      = "bottom"
 
 --------------------------------------------------------------------------------
 
@@ -318,6 +334,9 @@ eval (Free (StrokeText a1 a2 a3 c)) = do
   eval c
 eval (Free (TextAlign a1 c)) = do
   record ["ctx.textAlign = ('", jsTextAlign a1, "');"]
+  eval c
+eval (Free (TextBaseline a1 c)) = do
+  record ["ctx.textBaseline = ('", jsTextBaseline a1, "');"]
   eval c
 eval (Free (Transform a1 a2 a3 a4 a5 a6 c)) = do
   record ["ctx.transform("

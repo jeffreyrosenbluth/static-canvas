@@ -139,6 +139,9 @@ strokeStyle a1 = liftF $ StrokeStyle a1 ()
 textAlign :: TextAlignStyle -> CanvasFree ()
 textAlign a1 = liftF $ TextAlign a1 ()
                  
+textBaseline :: TextBaselineStyle -> CanvasFree ()
+textBaseline a1 = liftF $ TextBaseline a1 ()
+
 transform :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree ()
 transform a1 a2 a3 a4 a5 a6 = liftF $ Transform a1 a2 a3 a4 a5 a6 ()
 
