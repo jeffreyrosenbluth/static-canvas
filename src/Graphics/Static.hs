@@ -15,6 +15,9 @@ import Data.Text                   (Text)
 import Graphics.Static.Internal
 import Control.Monad.Free          (liftF)
 
+addColorStop :: Double -> Color -> Int -> CanvasFree ()
+addColorStop a1 a2 a3 = liftF $ AddColorStop a1 a2 a3 ()
+
 arc :: Double -> Double -> Double -> Double -> Double -> Bool -> CanvasFree ()
 arc a1 a2 a3 a4 a5 a6 = liftF $ Arc a1 a2 a3 a4 a5 a6 ()
 
@@ -92,6 +95,9 @@ setTransform a1 a2 a3 a4 a5 a6 = liftF $ SetTransform a1 a2 a3 a4 a5 a6 ()
 
 shadowBlur :: Double -> CanvasFree ()
 shadowBlur a1 = liftF $ ShadowBlur a1 ()
+
+shadowColor :: Color -> CanvasFree ()
+shadowColor a1 = liftF $ ShadowColor a1 ()
 
 shadowOffsetX :: Double -> CanvasFree ()
 shadowOffsetX a1 = liftF $ ShadowOffsetX a1 ()

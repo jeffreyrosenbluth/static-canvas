@@ -30,7 +30,7 @@ newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
 type CanvasFree = F Canvas
 
 data Canvas r
-  = AddColorStop !Double !Color !Int r
+  = AddColorStop !Double Color !Int r
   | Arc !Double !Double !Double !Double !Double !Bool r
   | ArcTo !Double !Double !Double !Double !Double r
   | BeginPath r
@@ -45,10 +45,10 @@ data Canvas r
   | Fill r
   | FillRect !Double !Double !Double !Double r
   -- | FillStyle
-  | FillText !Text !Double !Double r
+  | FillText Text !Double !Double r
   -- | Font
   | GlobalAlpha !Double r
-  | GlobalCompositeOperation !Text r
+  | GlobalCompositeOperation Text r
   | LinearGradient !Double !Double !Double !Double (Int -> r)
   -- | LineCap
   -- | LineJoin
@@ -68,21 +68,21 @@ data Canvas r
   | Scale !Double !Double r
   | SetTransform !Double !Double !Double !Double !Double !Double r
   | ShadowBlur !Double r
-  -- | ShadowColor
+  | ShadowColor Color r
   | ShadowOffsetX !Double r
   | ShadowOffsetY !Double r
   | Stroke r
   | StrokeRect !Double !Double !Double !Double r
   -- | StrokeStyle
-  | StrokeText !Text !Double !Double r
+  | StrokeText Text !Double !Double r
   -- | TextAlign
   -- | TextBaseLine
   | Transform !Double !Double !Double !Double !Double !Double r
   | Translate !Double !Double r
     deriving Functor
 
-data Color = Hex !Text
-           | RGB !Int !Int !Int
+data Color = Hex  Text
+           | RGB  !Int !Int !Int
            | RGBA !Int !Int !Int !Double
 
 
@@ -233,6 +233,9 @@ eval (Free (SetTransform a1 a2 a3 a4 a5 a6 c)) = do
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, comma
          , jsDouble a5, comma, jsDouble a6, ");"]
+  eval c
+eval (Free (ShadowColor a1 c)) = do
+  record ["ctx.shadowColor = (", jsColor a1, ");"]
   eval c
 eval (Free (ShadowBlur a1 c)) = do
   record ["ctx.shadowBlur = (", jsDouble a1, ");"]
