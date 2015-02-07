@@ -18,8 +18,8 @@ cabal-version:       >=1.10
 
 library
   ghc-options:         -Wall -rtsopts -O2
-  exposed-modules:     Graphics.Static.Types
-  -- other-modules:       
+  exposed-modules:     Graphics.Static
+  other-modules:       Graphics.Static.Internal
   -- other-extensions:    
   build-depends:       base >=4.5 && < 4.9,
                        mtl >= 2.2 && < 2.3,
