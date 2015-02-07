@@ -13,12 +13,14 @@
 
 module Graphics.Static.Javascript where
 
-import Graphics.Static.Types
 import Control.Monad.Writer
 import Data.Double.Conversion.Text (toFixed)
 import Data.Text                   (pack)
 import Data.Text.Lazy.Builder      (Builder, fromText, singleton)
+import Graphics.Static.Types
 
+build :: Show a => a -> Builder
+build = fromText .pack . show
    
 comma :: Builder
 comma = singleton ','
@@ -35,18 +37,18 @@ jsDouble = fromText . toFixed 4
 
 jsColor :: Color -> Builder
 jsColor (Hex t)        = fromText t
-jsColor (RGB r g b)    = "rgb("  <> (fromText . pack $ show r)
-                      <> comma   <> (fromText . pack $ show g)
-                      <> comma   <> (fromText . pack $ show b) <> singleton ')'
-jsColor (RGBA r g b a) = "rgba(" <> (fromText . pack $ show r)
-                      <> comma   <> (fromText . pack $ show g)
-                      <> comma   <> (fromText . pack $ show b)
+jsColor (RGB r g b)    = "rgb("  <> (build r)
+                      <> comma   <> (build g)
+                      <> comma   <> (build b) <> singleton ')'
+jsColor (RGBA r g b a) = "rgba(" <> (build r)
+                      <> comma   <> (build g)
+                      <> comma   <> (build b)
                       <> comma   <> (jsDouble a) <> singleton ')'
 
 jsStyle :: Style -> Builder
 jsStyle (ColorStyle c) = jsColor c
-jsStyle (GradientStyle (LG n)) = "gradient_" <> (fromText . pack . show $ n)
-jsStyle (GradientStyle (RG n)) = "gradient_" <> (fromText . pack . show $ n)
+jsStyle (GradientStyle (LG n)) = "gradient_" <> (build n)
+jsStyle (GradientStyle (RG n)) = "gradient_" <> (build n)
 
 jsLineCap :: LineCapStyle -> Builder
 jsLineCap LineCapButt   = "butt"

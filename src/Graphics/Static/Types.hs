@@ -9,18 +9,18 @@
 -- License     :  BSD-style (see LICENSE)
 -- Maintainer  :  jeffrey.rosenbluth@gmail.com
 --
--- DSL for creating HTML5 Canvas.
+-- A small DSL for creating HTML5 Canvas.
 --
 -------------------------------------------------------------------------------
 
 module Graphics.Static.Types where
 
 import Control.Applicative
-import Control.Monad.Free.Church   (F)
+import Control.Monad.Free.Church (F)
 import Control.Monad.State
 import Control.Monad.Writer
-import Data.Text                   (Text)
-import Data.Text.Lazy.Builder      (Builder)
+import Data.Text                (Text)
+import Data.Text.Lazy.Builder   (Builder)
 
 newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
   deriving (Functor, Applicative, Monad, MonadWriter Builder, MonadState Int)

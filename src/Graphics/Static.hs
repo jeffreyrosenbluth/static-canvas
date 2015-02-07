@@ -5,7 +5,7 @@
 -- License     :  BSD-style (see LICENSE)
 -- Maintainer  :  jeffrey.rosenbluth@gmail.com
 --
--- DSL for creating HTML5 Canvas.
+-- A small DSL for creating HTML5 Canvas.
 --
 -------------------------------------------------------------------------------
 
@@ -17,10 +17,10 @@ module Graphics.Static
   , evalScript
   ) where
 
-import Graphics.Static.Types
+import Control.Monad.Free           (liftF)
+import Data.Text                    (Text)
 import Graphics.Static.Interpreter
-import Data.Text                   (Text)
-import Control.Monad.Free          (liftF)
+import Graphics.Static.Types
 
 -------------------------------------------------------------------------------
 -- The DSL

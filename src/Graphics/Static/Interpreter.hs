@@ -11,15 +11,17 @@
 --
 -------------------------------------------------------------------------------
 
-module Graphics.Static.Interpreter where
+module Graphics.Static.Interpreter
+  ( evalScript
+  ) where
 
-import Graphics.Static.Types
-import Graphics.Static.Javascript
-import Control.Monad.Free          (Free(..))
-import Control.Monad.Free.Church   (fromF)
+import Control.Monad.Free         (Free(..))
+import Control.Monad.Free.Church  (fromF)
 import Control.Monad.State
 import Control.Monad.Writer
-import Data.Text.Lazy.Builder      (Builder, fromText, singleton)
+import Data.Text.Lazy.Builder     (Builder, fromText, singleton)
+import Graphics.Static.Javascript
+import Graphics.Static.Types
 
 evalScript :: CanvasFree a -> Builder
 evalScript c = (evalState . execWriterT . runScript . eval . fromF) c 0
