@@ -9,7 +9,13 @@
 --
 -------------------------------------------------------------------------------
 
-module Graphics.Static where
+module Graphics.Static
+  ( module Graphics.Static
+  , Style(..)
+  , Color(..)
+  , Gradient(..)
+  , evalScript
+  ) where
 
 import Data.Text                   (Text)
 import Graphics.Static.Internal
@@ -44,6 +50,9 @@ fill = liftF $ Fill ()
 
 fillRect :: Double -> Double -> Double -> Double -> CanvasFree ()
 fillRect a1 a2 a3 a4 = liftF $ FillRect a1 a2 a3 a4 ()
+
+fillStyle :: Style -> CanvasFree ()
+fillStyle a1 = liftF $ FillStyle a1 ()
 
 fillText :: Text -> Double -> Double -> CanvasFree ()
 fillText a1 a2 a3 = liftF $ FillText a1 a2 a3 ()
@@ -110,6 +119,9 @@ stroke = liftF $ Stroke ()
 
 strokeRect :: Double -> Double -> Double -> Double -> CanvasFree ()
 strokeRect a1 a2 a3 a4 = liftF $ StrokeRect a1 a2 a3 a4 ()
+
+strokeStyle :: Style -> CanvasFree ()
+strokeStyle a1 = liftF $ StrokeStyle a1 ()
 
 transform :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree ()
 transform a1 a2 a3 a4 a5 a6 = liftF $ Transform a1 a2 a3 a4 a5 a6 ()

@@ -104,7 +104,7 @@ inc = do
   return n
 
 comma :: Builder
-comma = comma
+comma = singleton ','
 
 jsBool :: Bool -> Builder
 jsBool True = "true"
@@ -117,7 +117,7 @@ jsDouble :: Double -> Builder
 jsDouble = fromText . toFixed 4
 
 jsColor :: Color -> Builder
-jsColor (Hex t) = fromText t
+jsColor (Hex t) = singleton '\'' <> fromText t <> singleton '\''
 jsColor (RGB r g b)    = "rgb("  <> (fromText . pack $ show r)
                       <> comma   <> (fromText . pack $ show g)
                       <> comma   <> (fromText . pack $ show b) <> singleton ')'
@@ -179,7 +179,7 @@ eval (Free (FillRect a1 a2 a3 a4 c)) = do
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval c
 eval (Free (FillStyle a1 c)) = do
-  record ["ctx.fillStyle(", jsStyle a1, ");"]
+  record ["ctx.fillStyle = (", jsStyle a1, ");"]
   eval c
 eval (Free (FillText a1 a2 a3 c)) = do
   record ["ctx.fillText(", fromText a1, comma
@@ -267,7 +267,7 @@ eval (Free (StrokeRect a1 a2 a3 a4 c)) = do
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval c
 eval (Free (StrokeStyle a1 c)) = do
-  record ["ctx.strokeStyle(", jsStyle a1, ");"]
+  record ["ctx.strokeStyle = (", jsStyle a1, ");"]
   eval c
 eval (Free (StrokeText a1 a2 a3 c)) =do
   record ["ctx.strokeText(", fromText a1, comma, jsDouble a2, comma, jsDouble a3, ");"]
