@@ -101,6 +101,11 @@ drawImageAt a1 a2 a3 = liftF $ DrawImageAt a1 a2 a3 ()
 drawImageSize :: Int -> Double -> Double -> Double -> Double -> CanvasFree ()
 drawImageSize a1 a2 a3 a4 a5 = liftF $ DrawImageSize a1 a2 a3 a4 a5 ()
 
+drawImageCrop :: Int -> Double -> Double -> Double -> Double -> Double
+                     -> Double -> Double -> Double -> CanvasFree ()
+drawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9
+  = liftF $ DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 ()
+
 fill :: CanvasFree ()
 fill = liftF $ Fill ()
 

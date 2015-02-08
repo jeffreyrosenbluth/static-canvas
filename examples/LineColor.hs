@@ -3,13 +3,14 @@
 module Main where
 
 import Graphics.Static
+import Graphics.Static.ColorNames
 
 linecolor :: CanvasFree ()
 linecolor = do
   moveTo 100 150
   lineTo 450 50
   lineWidth 5
-  strokeStyle (ColorStyle (Hex "#ff0000"))
+  strokeStyle goldenrod
   stroke
 
 main :: IO ()

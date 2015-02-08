@@ -39,6 +39,7 @@ data Canvas r
   -- | CreatePattern
   | DrawImageAt !Int !Double !Double r
   | DrawImageSize !Int !Double !Double !Double !Double r
+  | DrawImageCrop !Int !Double !Double !Double !Double !Double !Double !Double !Double r
   | Fill r
   | FillRect !Double !Double !Double !Double r
   | FillStyle Style r
