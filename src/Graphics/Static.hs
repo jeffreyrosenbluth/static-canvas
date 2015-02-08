@@ -57,7 +57,7 @@ buildScript w h canvas
 -- The DSL
 -------------------------------------------------------------------------------
 
-addColorStop :: Int -> Color -> Style -> CanvasFree ()
+addColorStop :: Double -> Color -> Style -> CanvasFree ()
 addColorStop a1 a2 a3 = liftF $ AddColorStop a1 a2 a3 ()
 
 arc :: Double -> Double -> Double -> Double -> Double -> Bool -> CanvasFree ()

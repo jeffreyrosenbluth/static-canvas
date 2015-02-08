@@ -41,7 +41,7 @@ eval :: Free Canvas a -> Script a
 
 eval (Free (AddColorStop a1 a2 a3 c)) = do
   record [jsStyle a3, ".addColorStop("
-         , jsInt a1, comma, jsColor a2, ");"]
+         , jsDouble a1, comma, jsColor a2, ");"]
   eval c
 
 eval (Free (Arc a1 a2 a3 a4 a5 a6 c)) = do
