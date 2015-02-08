@@ -90,14 +90,6 @@ eval (Free (CreateLinearGradient a1 a2 a3 a4 k)) = do
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval (k (GradientStyle (LG i)))
 
--- eval (Free (CreatePattern a1 a2 k)) = do
---   i <- inc
---   record  ["var pattern_", jsInt i, "; image_"
---           , jsInt a1, ".onload = function() {pattern_"
---           , jsInt i, " = ctx.createPattern(image_"
---           , jsInt a1, comma, jsRepeat a2, ");};"]
---   eval (k (PatternStyle i))
-
 eval (Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k)) = do
   i <- inc
   record ["var gradient_", jsInt i, " = ctx.createRadialGradient("

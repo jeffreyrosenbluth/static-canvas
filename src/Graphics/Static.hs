@@ -17,7 +17,9 @@ module Graphics.Static
   , Color(..)
   , Gradient(..)
   , LineCapStyle(..)
-  -- , RepeatStyle(..)
+  , LineJoinStyle(..)
+  , TextAlignStyle(..)
+  , TextBaselineStyle(..)
   , CanvasFree
   , evalScript
   ) where
@@ -98,9 +100,6 @@ closePath = liftF $ ClosePath ()
 
 createLinearGradient :: Double -> Double -> Double -> Double -> CanvasFree Style
 createLinearGradient a1 a2 a3 a4 = liftF $ CreateLinearGradient a1 a2 a3 a4 id
-
--- createPattern :: Int -> RepeatStyle -> CanvasFree Style 
--- createPattern a1 a2 = liftF $ CreatePattern a1 a2 id
 
 createRadialGradient :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree Style
 createRadialGradient a1 a2 a3 a4 a5 a6 = liftF $ CreateRadialGradient a1 a2 a3 a4 a5 a6 id
@@ -199,6 +198,9 @@ strokeRect a1 a2 a3 a4 = liftF $ StrokeRect a1 a2 a3 a4 ()
 
 strokeStyle :: Style -> CanvasFree ()
 strokeStyle a1 = liftF $ StrokeStyle a1 ()
+
+strokeText :: Text -> Double -> Double -> CanvasFree ()
+strokeText a1 a2 a3 = liftF $ StrokeText a1 a2 a3 ()
 
 textAlign :: TextAlignStyle -> CanvasFree ()
 textAlign a1 = liftF $ TextAlign a1 ()

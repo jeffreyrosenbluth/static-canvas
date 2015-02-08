@@ -116,9 +116,3 @@ data TextBaselineStyle
   | TextBaselineMiddle
   | TextBaselineIdeographic
   | TextBaselineBottom
-
--- data RepeatStyle
---   = Repeat
---   | RepeatX
---   | RepeatY
---   | NoRepeat
