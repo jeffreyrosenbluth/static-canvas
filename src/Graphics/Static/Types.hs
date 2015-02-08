@@ -37,9 +37,7 @@ data Canvas r
   | Clip r
   | ClosePath r
   -- | CreatePattern
-  -- | DrawImage2
-  -- | DrawImage4
-  -- | DrawImage8
+  | DrawImageAt !Int !Double !Double r
   | Fill r
   | FillRect !Double !Double !Double !Double r
   | FillStyle Style r
@@ -54,7 +52,7 @@ data Canvas r
   | LineWidth !Double r
   | MiterLimit !Double r
   | MoveTo !Double !Double r
-  -- | NewImage
+  | NewImage Text (Int -> r)
   -- | PutImageData2
   -- | PutImageData6
   | QuadraticCurveTo !Double !Double !Double !Double r

@@ -83,6 +83,11 @@ eval (Free (ClosePath c)) = do
   tell "ctx.closePath();"
   eval c
 
+eval (Free (DrawImageAt a1 a2 a3 c)) = do
+  record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
+         , jsInt a1, comma, jsDouble a2, comma, jsDouble a3, ");};"]
+  eval c
+
 eval (Free (Fill c)) = do
   tell "ctx.fill();"
   eval c
@@ -146,6 +151,12 @@ eval (Free (MoveTo a1 a2 c)) = do
   record ["ctx.moveTo(", jsDouble a1, comma, jsDouble a2, ");"]
   eval c
 
+eval (Free (NewImage a1 k)) = do
+  i <- inc
+  record ["var image_", jsInt i, " = new Image(); image_"
+         , jsInt i, ".src = ('", fromText a1, "');"]
+  eval (k i)
+  
 eval (Free (QuadraticCurveTo a1 a2 a3 a4 c)) = do
   record ["ctx.quadraticCurveTo("
          , jsDouble a1, comma, jsDouble a2, comma

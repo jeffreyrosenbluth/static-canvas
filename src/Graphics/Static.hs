@@ -95,6 +95,9 @@ clip = liftF $ Clip ()
 closePath :: CanvasFree ()
 closePath = liftF $ ClosePath ()
 
+drawImageAt :: Int -> Double -> Double -> CanvasFree ()
+drawImageAt a1 a2 a3 = liftF $ DrawImageAt a1 a2 a3 ()
+
 fill :: CanvasFree ()
 fill = liftF $ Fill ()
 
@@ -136,6 +139,9 @@ miterLimit a1 = liftF $ MiterLimit a1 ()
 
 moveTo :: Double -> Double -> CanvasFree ()
 moveTo a1 a2 = liftF $ MoveTo a1 a2 ()
+
+newImage :: Text -> CanvasFree Int
+newImage a1 = liftF $ NewImage a1 id
 
 quadraticCurveTo :: Double -> Double -> Double -> Double -> CanvasFree ()
 quadraticCurveTo a1 a2 a3 a4 = liftF $ QuadraticCurveTo a1 a2 a3 a4 ()
