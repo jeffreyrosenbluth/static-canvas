@@ -17,6 +17,7 @@ module Graphics.Static
   , Color(..)
   , Gradient(..)
   , LineCapStyle(..)
+  -- , RepeatStyle(..)
   , CanvasFree
   , evalScript
   ) where
@@ -95,6 +96,15 @@ clip = liftF $ Clip ()
 closePath :: CanvasFree ()
 closePath = liftF $ ClosePath ()
 
+createLinearGradient :: Double -> Double -> Double -> Double -> CanvasFree Style
+createLinearGradient a1 a2 a3 a4 = liftF $ CreateLinearGradient a1 a2 a3 a4 id
+
+-- createPattern :: Int -> RepeatStyle -> CanvasFree Style 
+-- createPattern a1 a2 = liftF $ CreatePattern a1 a2 id
+
+createRadialGradient :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree Style
+createRadialGradient a1 a2 a3 a4 a5 a6 = liftF $ CreateRadialGradient a1 a2 a3 a4 a5 a6 id
+
 drawImageAt :: Int -> Double -> Double -> CanvasFree ()
 drawImageAt a1 a2 a3 = liftF $ DrawImageAt a1 a2 a3 ()
 
@@ -127,9 +137,6 @@ globalAlpha a1 = liftF $ GlobalAlpha a1 ()
 globalCompositeOperation :: Text -> CanvasFree ()
 globalCompositeOperation a1 = liftF $ GlobalCompositeOperation a1 ()
 
-createLinearGradient :: Double -> Double -> Double -> Double -> CanvasFree Style
-createLinearGradient a1 a2 a3 a4 = liftF $ LinearGradient a1 a2 a3 a4 id
-
 lineCap :: LineCapStyle -> CanvasFree ()
 lineCap a1 = liftF $ LineCap a1 ()
 
@@ -153,9 +160,6 @@ newImage a1 = liftF $ NewImage a1 id
 
 quadraticCurveTo :: Double -> Double -> Double -> Double -> CanvasFree ()
 quadraticCurveTo a1 a2 a3 a4 = liftF $ QuadraticCurveTo a1 a2 a3 a4 ()
-
-createRadialGradient :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree Style
-createRadialGradient a1 a2 a3 a4 a5 a6 = liftF $ RadialGradient a1 a2 a3 a4 a5 a6 id
 
 rect :: Double -> Double -> Double -> Double -> CanvasFree ()
 rect a1 a2 a3 a4 = liftF $ Rect a1 a2 a3 a4 ()

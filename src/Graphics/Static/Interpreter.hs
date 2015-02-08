@@ -83,6 +83,29 @@ eval (Free (ClosePath c)) = do
   tell "ctx.closePath();"
   eval c
 
+eval (Free (CreateLinearGradient a1 a2 a3 a4 k)) = do
+  i <- inc
+  record ["var gradient_", jsInt i, " = ctx.createLinearGradient("
+         , jsDouble a1, comma, jsDouble a2, comma
+         , jsDouble a3, comma, jsDouble a4, ");"]
+  eval (k (GradientStyle (LG i)))
+
+-- eval (Free (CreatePattern a1 a2 k)) = do
+--   i <- inc
+--   record  ["var pattern_", jsInt i, "; image_"
+--           , jsInt a1, ".onload = function() {pattern_"
+--           , jsInt i, " = ctx.createPattern(image_"
+--           , jsInt a1, comma, jsRepeat a2, ");};"]
+--   eval (k (PatternStyle i))
+
+eval (Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k)) = do
+  i <- inc
+  record ["var gradient_", jsInt i, " = ctx.createRadialGradient("
+         , jsDouble a1, comma, jsDouble a2, comma
+         , jsDouble a3, comma, jsDouble a4, comma
+         , jsDouble a5, comma, jsDouble a6, ");"]
+  eval (k (GradientStyle (RG i)))
+
 eval (Free (DrawImageAt a1 a2 a3 c)) = do
   record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
          , jsInt a1, comma, jsDouble a2, comma
@@ -137,13 +160,6 @@ eval (Free (GlobalCompositeOperation a1 c)) = do
   record ["ctx.globalCompositeOperation = (", fromText a1, ");"]
   eval c
 
-eval (Free (LinearGradient a1 a2 a3 a4 k)) = do
-  i <- inc
-  record ["var gradient_", jsInt i, " = ctx.createLinearGradient("
-         , jsDouble a1, comma, jsDouble a2, comma
-         , jsDouble a3, comma, jsDouble a4, ");"]
-  eval (k (GradientStyle (LG i)))
-
 eval (Free (LineCap a1 c)) = do
   record ["ctx.lineCap = ('", jsLineCap a1, "');"]
   eval c
@@ -179,14 +195,6 @@ eval (Free (QuadraticCurveTo a1 a2 a3 a4 c)) = do
          , jsDouble a1, comma, jsDouble a2, comma
          , jsDouble a3, comma, jsDouble a4, ");"]
   eval c
-
-eval (Free (RadialGradient a1 a2 a3 a4 a5 a6 k)) = do
-  i <- inc
-  record ["var gradient_", jsInt i, " = ctx.createRadialGradient("
-         , jsDouble a1, comma, jsDouble a2, comma
-         , jsDouble a3, comma, jsDouble a4, comma
-         , jsDouble a5, comma, jsDouble a6, ");"]
-  eval (k (GradientStyle (RG i)))
 
 eval (Free (Rect a1 a2 a3 a4 c)) = do
   record ["ctx.rect(", jsDouble a1, comma

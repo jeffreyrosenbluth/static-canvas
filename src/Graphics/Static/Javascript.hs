@@ -49,9 +49,10 @@ jsColor (RGBA r g b a) = quote $ "rgba(" <> (build r)
                       <> comma   <> (jsDouble a) <> singleton ')'
 
 jsStyle :: Style -> Builder
-jsStyle (ColorStyle c) = jsColor c
+jsStyle (ColorStyle c)         = jsColor c
 jsStyle (GradientStyle (LG n)) = "gradient_" <> (build n)
 jsStyle (GradientStyle (RG n)) = "gradient_" <> (build n)
+-- jsStyle (PatternStyle n)       = "pattern_" <> (build n)
 
 jsLineCap :: LineCapStyle -> Builder
 jsLineCap LineCapButt   = "butt"
@@ -76,3 +77,9 @@ jsTextBaseline TextBaselineHanging     = "hanging"
 jsTextBaseline TextBaselineMiddle      = "middle"
 jsTextBaseline TextBaselineIdeographic = "ideographic"
 jsTextBaseline TextBaselineBottom      = "bottom"
+
+-- jsRepeat :: RepeatStyle -> Builder
+-- jsRepeat Repeat = quote "repeat"
+-- jsRepeat RepeatX = quote "repeat-x"
+-- jsRepeat RepeatY = quote "repeat-y"
+-- jsRepeat NoRepeat = quote "no-repeat"
