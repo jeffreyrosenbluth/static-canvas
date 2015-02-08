@@ -11,7 +11,19 @@
 --
 -------------------------------------------------------------------------------
 
-module Graphics.Static.Javascript where
+module Graphics.Static.Javascript
+  (
+    jsBool
+  , jsInt
+  , jsDouble
+  , jsColor
+  , jsStyle
+  , jsLineCap
+  , jsLineJoin
+  , jsTextAlign
+  , jsTextBaseline
+  , comma
+  ) where
 
 import Control.Monad.Writer
 import Data.Double.Conversion.Text (toFixed)

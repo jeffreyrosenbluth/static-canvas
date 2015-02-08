@@ -23,6 +23,7 @@ import Data.Text.Lazy.Builder     (Builder, fromText, singleton)
 import Graphics.Static.Javascript
 import Graphics.Static.Types
 
+-- | Evaluate a static-canvas program and return the javascript code in a 'Builder'.
 evalScript :: CanvasFree a -> Builder
 evalScript c = (evalState . execWriterT . runScript . eval . fromF) c 0
 

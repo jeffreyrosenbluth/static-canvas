@@ -12,16 +12,80 @@
 -------------------------------------------------------------------------------
 
 module Graphics.Static
-  ( module Graphics.Static
-  , Style(..)
-  , Color(..)
-  , Gradient(..)
+  (
+   -- * Building and Writing
+    evalScript
+  , buildScript
+  , buildDoc
+  , writeCanvasScript
+  , writeCanvasDoc
+   -- * HTML5 Canvas API
+  , CanvasFree
+   -- ** Paths
+  , beginPath
+  , closePath
+  , fill
+  , stroke
+  , clip
+  , moveTo
+  , lineTo
+  , quadraticCurveTo
+  , bezierCurveTo
+  , arcTo
+  , arc
+  , rect
+   -- ** Line styles
+  , lineWidth
+  , lineCap
+  , lineJoin
+  , miterLimit
   , LineCapStyle(..)
   , LineJoinStyle(..)
+   -- ** Colors, styles and shadows
+  , strokeStyle
+  , fillStyle
+  , shadowOffsetX
+  , shadowOffsetY
+  , shadowBlur
+  , shadowColor
+  , createLinearGradient
+  , createRadialGradient
+  , addColorStop
+  , Gradient(..)
+  , Color(..)
+  , Style(..)
+   -- ** Color utilities
+  , rgb
+  , rgba
+   -- ** Text
+  , font
+  , textAlign
+  , textBaseline
+  , fillText
+  , strokeText
   , TextAlignStyle(..)
   , TextBaselineStyle(..)
-  , CanvasFree
-  , evalScript
+   -- ** Rectangles
+  , clearRect
+  , fillRect
+  , strokeRect
+   -- ** Context
+  , save
+  , restore
+   -- ** Transformations
+  , scale
+  , rotate
+  , translate
+  , transform
+  , setTransform
+   -- ** Images
+  , drawImageAt
+  , drawImageSize
+  , drawImageCrop
+  , newImage
+   -- ** Compositing
+  , globalAlpha
+  , globalCompositeOperation
   ) where
 
 import Control.Monad.Free          (liftF)
@@ -35,7 +99,7 @@ import Graphics.Static.Javascript
 import Graphics.Static.Types
 
 -------------------------------------------------------------------------------
--- Output
+-- Building and writing
 -------------------------------------------------------------------------------
 
 writeCanvasDoc :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
@@ -61,7 +125,7 @@ buildScript w h canvas
   <> "</script>"
 
 -------------------------------------------------------------------------------
--- Style utilities
+-- Color utilities
 -------------------------------------------------------------------------------
 
 rgb :: Int -> Int -> Int -> Style

@@ -38,7 +38,6 @@ data Canvas r
   | ClosePath r
   | CreateLinearGradient !Double !Double !Double !Double (Style -> r)
   | CreateRadialGradient !Double !Double !Double !Double !Double !Double (Style -> r)
-  -- | CreatePattern !Int RepeatStyle (Style -> r)
   | DrawImageAt !Int !Double !Double r
   | DrawImageSize !Int !Double !Double !Double !Double r
   | DrawImageCrop !Int !Double !Double !Double !Double !Double !Double !Double !Double r
@@ -56,8 +55,6 @@ data Canvas r
   | MiterLimit !Double r
   | MoveTo !Double !Double r
   | NewImage Text (Int -> r)
-  -- | PutImageData2
-  -- | PutImageData6
   | QuadraticCurveTo !Double !Double !Double !Double r
   | Rect !Double !Double !Double !Double r
   | Restore r
