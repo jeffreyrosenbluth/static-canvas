@@ -88,6 +88,12 @@ eval (Free (DrawImageAt a1 a2 a3 c)) = do
          , jsInt a1, comma, jsDouble a2, comma, jsDouble a3, ");};"]
   eval c
 
+eval (Free (DrawImageSize a1 a2 a3 a4 a5 c)) = do
+  record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
+         , jsInt a1, comma, jsDouble a2, comma, jsDouble a3
+         , comma, jsDouble a4, comma, jsDouble a5, ");};"]
+  eval c
+
 eval (Free (Fill c)) = do
   tell "ctx.fill();"
   eval c
