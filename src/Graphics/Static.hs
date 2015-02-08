@@ -31,6 +31,10 @@ import Graphics.Static.Interpreter
 import Graphics.Static.Javascript
 import Graphics.Static.Types
 
+-------------------------------------------------------------------------------
+-- Output
+-------------------------------------------------------------------------------
+
 writeCanvasDoc :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
 writeCanvasDoc path w h canvas = writeFile path (toLazyText $ buildDoc w h canvas)
 
@@ -52,6 +56,16 @@ buildScript w h canvas
   <> "var ctx = canvas.getContext('2d');"
   <> (evalScript canvas)
   <> "</script>"
+
+-------------------------------------------------------------------------------
+-- Style utilities
+-------------------------------------------------------------------------------
+
+rgb :: Int -> Int -> Int -> Style
+rgb r g b = ColorStyle (RGB r g b)
+
+rgba :: Int -> Int -> Int -> Double -> Style
+rgba r g b a = ColorStyle (RGBA r g b a)
 
 -------------------------------------------------------------------------------
 -- The DSL

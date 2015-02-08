@@ -19,6 +19,7 @@ cabal-version:       >=1.10
 library
   ghc-options:         -Wall -rtsopts -O2
   exposed-modules:     Graphics.Static
+                       Graphics.Static.ColorNames
   other-modules:       Graphics.Static.Types
                        Graphics.Static.Interpreter
                        Graphics.Static.Javascript
