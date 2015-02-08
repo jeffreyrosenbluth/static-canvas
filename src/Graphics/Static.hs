@@ -16,6 +16,7 @@ module Graphics.Static
   , Style(..)
   , Color(..)
   , Gradient(..)
+  , LineCapStyle(..)
   , CanvasFree
   , evalScript
   ) where
