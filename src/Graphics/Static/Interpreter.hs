@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 -------------------------------------------------------------------------------
 -- |
@@ -7,7 +7,7 @@
 -- License     :  BSD-style (see LICENSE)
 -- Maintainer  :  jeffrey.rosenbluth@gmail.com
 --
--- DSL for creating HTML5 Canvas.
+-- Interpreter to convert a static-canvas representation to js.
 --
 -------------------------------------------------------------------------------
 
@@ -100,9 +100,8 @@ eval (Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k)) = do
   eval (k (GradientStyle (RG i)))
 
 eval (Free (DrawImageAt a1 a2 a3 c)) = do
-  record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
-         , jsInt a1, comma, jsDouble a2, comma
-         , jsDouble a3, ");};"]
+  record ["ctx.drawImage(image_" , jsInt a1, comma
+         , jsDouble a2, comma, jsDouble a3, ");"]
   eval c
 
 eval (Free (DrawImageSize a1 a2 a3 a4 a5 c)) = do
@@ -183,6 +182,10 @@ eval (Free (NewImage a1 k)) = do
          , jsInt i, ".src = ('", fromText a1, "');"]
   eval (k i)
   
+eval (Free (OnImageLoad a1 a2 c)) = do
+  record ["image_", jsInt a1, ".onload = function() {", a2, "};"]
+  eval c
+
 eval (Free (QuadraticCurveTo a1 a2 a3 a4 c)) = do
   record ["ctx.quadraticCurveTo("
          , jsDouble a1, comma, jsDouble a2, comma

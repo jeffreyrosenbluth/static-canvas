@@ -55,6 +55,7 @@ data Canvas r
   | MiterLimit !Double r
   | MoveTo !Double !Double r
   | NewImage Text (Int -> r)
+  | OnImageLoad !Int Builder r
   | QuadraticCurveTo !Double !Double !Double !Double r
   | Rect !Double !Double !Double !Double r
   | Restore r
@@ -88,7 +89,6 @@ data Gradient
 data Style
   = ColorStyle Color
   | GradientStyle Gradient
-  -- | PatternStyle !Int
 
 data LineCapStyle
   = LineCapButt
