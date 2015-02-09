@@ -31,7 +31,7 @@ main :: IO ()
 main = writeCanvasDoc "Text.html" 600 400 text
 ```
 There are plenty of examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples).
-Here is one more showing how to use patternt to fill a rectangle.
+Here is one more showing how to use pattern to fill a rectangle.
 
 ![line](http://i.imgur.com/RRvyXyv.png)
 ```haskell
