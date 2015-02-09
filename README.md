@@ -7,7 +7,7 @@ a surprisingly small part of HTML5 Canvas.
 
 Here is Hello world with fancy text.
 
-![Text](http://i.imgur.com/XQrbYv2.png)
+![Text](http://i.imgur.com/9MmIlsD.png)
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
 
