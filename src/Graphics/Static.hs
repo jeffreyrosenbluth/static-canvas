@@ -9,8 +9,8 @@
 --
 -- A small DSL for creating HTML5 Canvas with haskell.
 --
--- <<http://i.imgur.com/XQrbYv2.png>>
--- 
+-- <<http://i.imgur.com/HGjSpJ6.png>>
+--
 -- > module Main where
 -- >
 -- > import Graphics.Static

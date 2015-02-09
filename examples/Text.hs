@@ -7,13 +7,13 @@ import Graphics.Static.ColorNames
 
 text :: CanvasFree ()
 text = do
-  font "italic 60pt Calibri"
+  font "italic 57pt Calibri"
   lineWidth 6
   strokeStyle blue
   fillStyle goldenrod
   textBaseline TextBaselineMiddle
-  strokeText "Hello" 150 100 
-  fillText "Hello World!" 150 100
+  strokeText "Hello" 25 100 
+  fillText "Hello static-canvas!" 25 100
 
 main :: IO ()
-main = writeCanvasDoc "Text.html" 600 400 text
+main = writeCanvasDoc "Text.html" 650 300 text
