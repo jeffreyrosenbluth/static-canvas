@@ -1,14 +1,22 @@
 name:                static-canvas
 version:             0.1.0.0
-synopsis:            Mini DSL to generate HTML5 Canvas javascript.
-description:         Mini DSL to generate HTML5 Canvas javascript.
+synopsis:            DSL to generate HTML5 Canvas javascript.
+description:
+  A simple DSL for writing HTML5 Canvas in haskell and converting it
+  to Javascript. By static we mean non-interactive, so the parts of
+  the Canvas API that need to query the browser for run time information
+  like `isPointInPath(x, y)` are not included. This turns out to be
+  a surprisingly small part of HTML5 Canvas.
+
 homepage:            https://github.com/jeffreyrosenbluth/static-canvas
+bug-reports:         https://github.com/jeffreyrosenbluth/static-canvas/issues
 license:             BSD3
 license-file:        LICENSE
 author:              Jeffrey Rosenbluth
 maintainer:          jeffrey.rosenbluth@gmail.com
 copyright:           2015 Jeffrey Rosenbluth
 category:            Graphics
+stability:           Experimental
 build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
