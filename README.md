@@ -30,7 +30,7 @@ main :: IO ()
 main = writeCanvasDoc "Text.html" 600 400 text
 ```
 and here we draw a 10 pixel indigo colored line with round end caps.
-There are plenty of other examples in ![Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples)
+There are plenty of other examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples)
 
 ![line](http://i.imgur.com/4Os9oxb.png)
 ```haskell
