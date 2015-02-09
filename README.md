@@ -1,6 +1,8 @@
 # static-canvas
 A tiny DSL for HTML5 Canvas
 
+Here we draw a 10 pixel indigo colored line with round end caps.
+
 ![line](http://i.imgur.com/4Os9oxb.png)
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -23,6 +25,8 @@ line = do
 main :: IO ()
 main = writeCanvasDoc "Line.html" 500 200 line
 ```
+and here is Hello world with fancy text.
+
 ![Text](http://i.imgur.com/XQrbYv2.png)
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
