@@ -21,7 +21,7 @@ line = do
 main :: IO ()
 main = writeCanvasDoc "Line.html" 500 200 line
 ```
-[![line](http://i.imgur.com/4Os9oxb.png)]
+![line](http://i.imgur.com/4Os9oxb.png)
 
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
