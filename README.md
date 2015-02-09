@@ -30,28 +30,26 @@ text = do
 main :: IO ()
 main = writeCanvasDoc "Text.html" 600 400 text
 ```
-and here we draw a 10 pixel indigo colored line with round end caps.
-There are plenty of other examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples).
+There are plenty of examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples).
+Here is one more showing how to use patternt to fill a rectangle.
 
-![line](http://i.imgur.com/4Os9oxb.png)
+![line](http://i.imgur.com/RRvyXyv.png)
 ```haskell
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main where
 
 import Graphics.Static
-import Graphics.Static.ColorNames
 
-line :: CanvasFree ()
-line = do
-  beginPath
-  moveTo 100 150
-  lineTo 450 50
-  lineWidth 10
-  strokeStyle indigo
-  lineCap LineCapRound
-  stroke
+pattern :: CanvasFree ()
+pattern = do
+  img <- newImage "tile.png"
+  onImageLoad img $ do
+    ptn <- createPattern img Repeat
+    rect 0 0 400 400
+    fillStyle ptn
+    fill
 
 main :: IO ()
-main = writeCanvasDoc "Line.html" 500 200 line
+main = writeCanvasDoc "Pattern.html" 400 400 pattern
 ```
