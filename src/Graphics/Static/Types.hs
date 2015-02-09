@@ -37,6 +37,7 @@ data Canvas r
   | Clip r
   | ClosePath r
   | CreateLinearGradient !Double !Double !Double !Double (Style -> r)
+  | CreatePattern !Int RepeatStyle (Style -> r)
   | CreateRadialGradient !Double !Double !Double !Double !Double !Double (Style -> r)
   | DrawImageAt !Int !Double !Double r
   | DrawImageSize !Int !Double !Double !Double !Double r
@@ -89,6 +90,7 @@ data Gradient
 data Style
   = ColorStyle Color
   | GradientStyle Gradient
+  | PatternStyle !Int
 
 data LineCapStyle
   = LineCapButt
@@ -113,3 +115,9 @@ data TextBaselineStyle
   | TextBaselineMiddle
   | TextBaselineIdeographic
   | TextBaselineBottom
+
+data RepeatStyle
+  = Repeat
+  | RepeatX
+  | RepeatY
+  | NoRepeat
