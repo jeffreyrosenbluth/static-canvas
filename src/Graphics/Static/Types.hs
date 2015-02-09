@@ -55,7 +55,7 @@ data Canvas r
   | MiterLimit !Double r
   | MoveTo !Double !Double r
   | NewImage Text (Int -> r)
-  | OnImageLoad !Int Builder r
+  | OnImageLoad !Int (CanvasFree ()) r
   | QuadraticCurveTo !Double !Double !Double !Double r
   | Rect !Double !Double !Double !Double r
   | Restore r

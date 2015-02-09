@@ -100,24 +100,22 @@ eval (Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k)) = do
   eval (k (GradientStyle (RG i)))
 
 eval (Free (DrawImageAt a1 a2 a3 c)) = do
-  record ["ctx.drawImage(image_" , jsInt a1, comma
+  record ["ctx.drawImage(image_", jsInt a1, comma
          , jsDouble a2, comma, jsDouble a3, ");"]
   eval c
 
 eval (Free (DrawImageSize a1 a2 a3 a4 a5 c)) = do
-  record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
-         , jsInt a1, comma, jsDouble a2, comma
-         , jsDouble a3 , comma, jsDouble a4, comma
-         , jsDouble a5, ");};"]
+  record ["ctx.drawImage(image_", jsInt a1, comma
+         , jsDouble a2, comma, jsDouble a3, comma
+         , jsDouble a4, comma, jsDouble a5, ");"]
   eval c
 
 eval (Free (DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 c)) = do
-  record ["image_", jsInt a1, ".onload = function() {ctx.drawImage(image_"
-         , jsInt a1, comma, jsDouble a2, comma
-         , jsDouble a3 , comma, jsDouble a4, comma
-         , jsDouble a5, comma , jsDouble a6, comma
-         , jsDouble a7, comma , jsDouble a8, comma
-         , jsDouble a9, ");};"]
+  record ["ctx.drawImage(image_", jsInt a1, comma
+         , jsDouble a2, comma, jsDouble a3, comma
+         , jsDouble a4, comma, jsDouble a5, comma
+         , jsDouble a6, comma, jsDouble a7, comma
+         , jsDouble a8, comma, jsDouble a9, ");"]
   eval c
 
 eval (Free (Fill c)) = do
@@ -183,7 +181,7 @@ eval (Free (NewImage a1 k)) = do
   eval (k i)
   
 eval (Free (OnImageLoad a1 a2 c)) = do
-  record ["image_", jsInt a1, ".onload = function() {", a2, "};"]
+  record ["image_", jsInt a1, ".onload = function() {", evalScript a2, "};"]
   eval c
 
 eval (Free (QuadraticCurveTo a1 a2 a3 a4 c)) = do

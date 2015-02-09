@@ -222,7 +222,7 @@ moveTo a1 a2 = liftF $ MoveTo a1 a2 ()
 newImage :: Text -> CanvasFree Int
 newImage a1 = liftF $ NewImage a1 id
 
-onImageLoad :: Int -> Builder -> CanvasFree ()
+onImageLoad :: Int -> CanvasFree () -> CanvasFree ()
 onImageLoad a1 a2 = liftF $ OnImageLoad a1 a2 ()
 
 quadraticCurveTo :: Double -> Double -> Double -> Double -> CanvasFree ()
