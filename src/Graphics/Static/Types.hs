@@ -116,6 +116,7 @@ data TextBaselineStyle
   | TextBaselineIdeographic
   | TextBaselineBottom
 
+-- | For use with @createPattern@
 data RepeatStyle
   = Repeat
   | RepeatX

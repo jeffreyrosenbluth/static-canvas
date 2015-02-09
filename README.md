@@ -1,7 +1,7 @@
 # static-canvas
 A simple DSL for writing HTML5 Canvas in haskell and converting it
-to Javascript. By static we mean, non-interactive so the parts of
-the Canvas API that need to query the browser for run time information,
+to Javascript. By static we mean non-interactive, so the parts of
+the Canvas API that need to query the browser for run time information
 like `isPointInPath(x, y)` are not included. This turns out to be
 a surprisingly small part of HTML5 Canvas.
 
@@ -30,7 +30,7 @@ main :: IO ()
 main = writeCanvasDoc "Text.html" 600 400 text
 ```
 and here we draw a 10 pixel indigo colored line with round end caps.
-There are plenty of other examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples)
+There are plenty of other examples in [Examples](https://github.com/jeffreyrosenbluth/static-canvas/tree/master/examples).
 
 ![line](http://i.imgur.com/4Os9oxb.png)
 ```haskell

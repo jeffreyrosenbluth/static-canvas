@@ -7,8 +7,31 @@
 -- License     :  BSD-style (see LICENSE)
 -- Maintainer  :  jeffrey.rosenbluth@gmail.com
 --
--- A small DSL for creating HTML5 Canvas.
+-- A small DSL for creating HTML5 Canvas with haskell.
 --
+-- <<http://i.imgur.com/XQrbYv2.png>>
+-- 
+-- > module Main where
+-- >
+-- > import Graphics.Static
+-- > import Graphics.Static.ColorNames
+-- > 
+-- > text :: CanvasFree ()
+-- > text = do
+-- > font "italic 60pt Calibri"
+-- > lineWidth 6
+-- > strokeStyle blue
+-- > fillStyle goldenrod
+-- > textBaseline TextBaselineMiddle
+-- > strokeText "Hello" 150 100 
+-- > fillText "Hello World!" 150 100
+-- > 
+-- > main :: IO ()
+-- > main = writeCanvasDoc "Text.html" 600 400 text
+--
+-- The static-canvas API shadows the actual Javascript API, and thus the
+-- best place to look for a more detailed definition of the canvas functions
+-- including the definitions of it's aruments see <http://www.w3.org/TR/2dcontext/>.
 -------------------------------------------------------------------------------
 
 module Graphics.Static
@@ -153,6 +176,7 @@ arcTo a1 a2 a3 a4 a5 = liftF $ ArcTo a1 a2 a3 a4 a5 ()
 beginPath :: CanvasFree ()
 beginPath = liftF $ BeginPath ()
 
+-- | Cubic Bezier curve.
 bezierCurveTo :: Double -> Double -> Double -> Double -> Double -> Double -> CanvasFree ()
 bezierCurveTo a1 a2 a3 a4 a5 a6 = liftF $ BezierCurveTo a1 a2 a3 a4 a5 a6 ()
 
@@ -215,6 +239,7 @@ lineJoin a1 = liftF $ LineJoin a1 ()
 lineTo :: Double -> Double -> CanvasFree ()
 lineTo a1 a2 = liftF $ LineTo a1 a2 ()
 
+-- | Set the line width.
 lineWidth :: Double -> CanvasFree ()
 lineWidth a1 = liftF $ LineWidth a1 ()
 
@@ -227,21 +252,30 @@ moveTo a1 a2 = liftF $ MoveTo a1 a2 ()
 newImage :: Text -> CanvasFree Int
 newImage a1 = liftF $ NewImage a1 id
 
+-- | Useful for commands that need to wait for an image to load before
+--   being called. For example
+--
+--   > image = do
+--   > img <- newImage "http://www.staticcanvas.com/picture.png"
+--   > onImageLoad img (drawImageAt img 0 0)
 onImageLoad :: Int -> CanvasFree () -> CanvasFree ()
 onImageLoad a1 a2 = liftF $ OnImageLoad a1 a2 ()
 
+-- | A quadratic bezier curve.
 quadraticCurveTo :: Double -> Double -> Double -> Double -> CanvasFree ()
 quadraticCurveTo a1 a2 a3 a4 = liftF $ QuadraticCurveTo a1 a2 a3 a4 ()
 
 rect :: Double -> Double -> Double -> Double -> CanvasFree ()
 rect a1 a2 a3 a4 = liftF $ Rect a1 a2 a3 a4 ()
 
+-- | Pop the top state of the stack.
 restore :: CanvasFree ()
 restore = liftF $ Restore ()
 
 rotate :: Double -> CanvasFree ()
 rotate a1 = liftF $ Rotate a1 ()
 
+-- | Push the current state onto the stack.
 save :: CanvasFree ()
 save = liftF $ Save ()
 
