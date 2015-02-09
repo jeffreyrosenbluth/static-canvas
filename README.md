@@ -5,7 +5,7 @@ the Canvas API that need to query the browser for run time information
 like `isPointInPath(x, y)` are not included. This turns out to be
 a surprisingly small part of HTML5 Canvas.
 
-Here is Hello world with fancy text.
+Here is Hello static-canvas with fancy text.
 
 ![Text](http://i.imgur.com/HGjSpJ6.png)
 
