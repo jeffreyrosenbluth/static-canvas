@@ -18,16 +18,16 @@
 -- > 
 -- > text :: CanvasFree ()
 -- > text = do
--- > font "italic 60pt Calibri"
--- > lineWidth 6
--- > strokeStyle blue
--- > fillStyle goldenrod
--- > textBaseline TextBaselineMiddle
--- > strokeText "Hello" 150 100 
--- > fillText "Hello World!" 150 100
+-- >   font "italic 60pt Calibri"
+-- >   lineWidth 6
+-- >   strokeStyle blue
+-- >   fillStyle goldenrod
+-- >   textBaseline TextBaselineMiddle
+-- >   strokeText "Hello" 25 100 
+-- >   fillText "Hello static-canvas!" 25 100
 -- > 
 -- > main :: IO ()
--- > main = writeCanvasDoc "Text.html" 600 400 text
+-- > main = writeCanvasDoc "example.html" 650 300 text
 --
 -- The static-canvas API shadows the actual Javascript API, and thus the
 -- best place to look for a more detailed definition of the canvas functions
