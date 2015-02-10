@@ -48,7 +48,7 @@ data Canvas r
   | FillText Text !Double !Double r
   | Font Text r
   | GlobalAlpha !Double r
-  | GlobalCompositeOperation Text r
+  | GlobalCompositeOperation CompositeOperation r
   | LineCap LineCapStyle r
   | LineJoin LineJoinStyle r
   | LineTo !Double !Double r
@@ -122,3 +122,16 @@ data RepeatStyle
   | RepeatX
   | RepeatY
   | NoRepeat
+
+data CompositeOperation
+  = SourceAtop
+  | SourceIn
+  | SourceOut
+  | SourceOver
+  | DestinationAtop
+  | DestinationIn
+  | DestinationOut
+  | DestinationOver
+  | Darker
+  | Xor
+  | Copy

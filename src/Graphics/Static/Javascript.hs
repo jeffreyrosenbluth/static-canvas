@@ -23,6 +23,7 @@ module Graphics.Static.Javascript
   , jsTextAlign
   , jsTextBaseline
   , jsRepeat
+  , jsComposite
   , comma
   ) where
 
@@ -96,3 +97,16 @@ jsRepeat Repeat = quote "repeat"
 jsRepeat RepeatX = quote "repeat-x"
 jsRepeat RepeatY = quote "repeat-y"
 jsRepeat NoRepeat = quote "no-repeat"
+
+jsComposite :: CompositeOperation -> Builder
+jsComposite SourceAtop      = "source-atop"
+jsComposite SourceIn        = "source-in"
+jsComposite SourceOut       = "source-out"
+jsComposite SourceOver      = "source-over"
+jsComposite DestinationAtop = "destination-atop"
+jsComposite DestinationIn   = "destination-in"
+jsComposite DestinationOut  = "destination-out"
+jsComposite DestinationOver = "destination-over"
+jsComposite Darker          = "darker"
+jsComposite Xor             = "xor"
+jsComposite Copy            = "copy"

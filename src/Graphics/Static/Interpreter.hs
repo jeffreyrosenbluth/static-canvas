@@ -153,7 +153,7 @@ eval (Free (GlobalAlpha a1 c)) = do
   eval c
   
 eval (Free (GlobalCompositeOperation a1 c)) = do
-  record ["ctx.globalCompositeOperation = (", fromText a1, ");"]
+  record ["ctx.globalCompositeOperation = ('", jsComposite a1, "');"]
   eval c
 
 eval (Free (LineCap a1 c)) = do

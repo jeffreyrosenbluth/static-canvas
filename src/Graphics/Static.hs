@@ -112,6 +112,7 @@ module Graphics.Static
    -- ** Compositing
   , globalAlpha
   , globalCompositeOperation
+  , CompositeOperation(..)
   ) where
 
 import Control.Monad.Free          (liftF)
@@ -227,7 +228,7 @@ font a1 = liftF $ Font a1 ()
 globalAlpha :: Double -> CanvasFree ()
 globalAlpha a1 = liftF $ GlobalAlpha a1 ()
 
-globalCompositeOperation :: Text -> CanvasFree ()
+globalCompositeOperation :: CompositeOperation -> CanvasFree ()
 globalCompositeOperation a1 = liftF $ GlobalCompositeOperation a1 ()
 
 lineCap :: LineCapStyle -> CanvasFree ()
