@@ -1,4 +1,4 @@
-# static-canvas
+# static-canvas [![Hackage](https://img.shields.io/hackage/v/static-canvas.svg?style=flat)](https://hackage.haskell.org/package/static-canvas)
 A simple DSL for writing HTML5 Canvas in haskell and converting it
 to Javascript. By static we mean non-interactive, so the parts of
 the Canvas API that need to query the browser for run time information
