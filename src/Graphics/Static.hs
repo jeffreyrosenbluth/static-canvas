@@ -151,7 +151,7 @@ writeCanvasScript' path w h uniqId canvas =
 buildDoc :: Int -> Int -> CanvasFree () -> Builder
 buildDoc w h canvas
   =  "<!DOCTYPE HTML><html><body>"
-  <> (buildScript' w h "" canvas)
+  <> (buildScript w h canvas)
   <> "</body></html>"
 
 -- | Create a 'Builder' representing a canvas script.
