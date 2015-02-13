@@ -146,9 +146,11 @@ buildScript w h canvas
   =  "<canvas id=\"theStaticCanvas\" width=\"" <> jsInt w
   <> "\" height=\"" <> jsInt h <> "\"></canvas>"
   <> "<script>"
+  <> "(function () {"
   <> "var canvas = document.getElementById('theStaticCanvas');"
   <> "var ctx = canvas.getContext('2d');"
   <> (evalScript canvas)
+  <> "}());"
   <> "</script>"
 
 -------------------------------------------------------------------------------
