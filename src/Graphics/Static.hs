@@ -39,8 +39,10 @@ module Graphics.Static
    -- * Building and Writing
     evalScript
   , buildScript
+  , buildScript'
   , buildDoc
   , writeCanvasScript
+  , writeCanvasScript'
   , writeCanvasDoc
    -- * HTML5 Canvas API
   , CanvasFree
@@ -119,7 +121,7 @@ import Control.Monad.Free          (liftF)
 import Data.Monoid
 import Prelude                     hiding (writeFile)
 import Data.Text                   (Text)
-import Data.Text.Lazy.Builder      (Builder, toLazyText)
+import Data.Text.Lazy.Builder      (Builder, toLazyText, fromText)
 import Data.Text.Lazy.IO           (writeFile) 
 import Graphics.Static.Interpreter
 import Graphics.Static.Javascript
@@ -129,29 +131,49 @@ import Graphics.Static.Types
 -- Building and writing
 -------------------------------------------------------------------------------
 
+-- | Write a canvas document to a file.
 writeCanvasDoc :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
-writeCanvasDoc path w h canvas = writeFile path (toLazyText $ buildDoc w h canvas)
+writeCanvasDoc path w h canvas =
+  writeFile path (toLazyText $ buildDoc w h canvas)
 
+-- | Write a canvas script element to a file.
 writeCanvasScript :: FilePath -> Int -> Int -> CanvasFree () -> IO ()
-writeCanvasScript path w h canvas = writeFile path (toLazyText $ buildScript w h canvas)
+writeCanvasScript path w h = writeCanvasScript' path w h ""
 
+-- | More general version of 'writeCanvasScript', that takes a unique identifier
+--   as an additional parameter so that multiple canvas elements can be included
+--   in the same html document.
+writeCanvasScript' :: FilePath -> Int -> Int -> Text -> CanvasFree () -> IO ()
+writeCanvasScript' path w h uniqId canvas =
+  writeFile path (toLazyText $ buildScript' w h uniqId canvas)
+
+-- | Create a 'Builder' representing a canvas document.
 buildDoc :: Int -> Int -> CanvasFree () -> Builder
 buildDoc w h canvas
   =  "<!DOCTYPE HTML><html><body>"
-  <> (buildScript w h canvas)
+  <> (buildScript' w h "" canvas)
   <> "</body></html>"
 
+-- | Create a 'Builder' representing a canvas script.
 buildScript :: Int -> Int -> CanvasFree () -> Builder
-buildScript w h canvas
-  =  "<canvas id=\"theStaticCanvas\" width=\"" <> jsInt w
+buildScript w h = buildScript' w h ""
+
+-- | More general version of 'buildScript', that takes a unique identifier
+--   as an additional parameter so that multiple canvas elements can be included
+--   in the same html document.
+buildScript' :: Int -> Int -> Text -> CanvasFree () -> Builder
+buildScript' w h uniqId canvas
+  =  "<canvas id=\"" <> uId <> "StaticCanvas\" width=\"" <> jsInt w
   <> "\" height=\"" <> jsInt h <> "\"></canvas>"
   <> "<script>"
   <> "(function () {"
-  <> "var canvas = document.getElementById('theStaticCanvas');"
-  <> "var ctx = canvas.getContext('2d');"
-  <> (evalScript canvas)
+  <> "var canvas = document.getElementById('"<> uId <> "StaticCanvas');"
+  <> "var " <> uId <> "Ctx = canvas.getContext('2d');"
+  <> (evalScript uniqId canvas)
   <> "}());"
   <> "</script>"
+  where
+    uId = fromText uniqId
 
 -------------------------------------------------------------------------------
 -- Color utilities
