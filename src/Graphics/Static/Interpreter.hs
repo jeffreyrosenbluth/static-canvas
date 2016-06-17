@@ -154,7 +154,7 @@ eval uniqId (Free (Font a1 c)) = do
 eval uniqId (Free (GlobalAlpha a1 c)) = do
   record [fromText uniqId, "Ctx.globalAlpha = (", jsDouble a1, ");"]
   eval uniqId c
-  
+
 eval uniqId (Free (GlobalCompositeOperation a1 c)) = do
   record [fromText uniqId, "Ctx.globalCompositeOperation = ('", jsComposite a1, "');"]
   eval uniqId c
@@ -188,7 +188,7 @@ eval uniqId (Free (NewImage a1 k)) = do
   record ["var image_", jsInt i, " = new Image(); image_"
          , jsInt i, ".src = ('", fromText a1, "');"]
   eval uniqId (k i)
-  
+
 eval uniqId (Free (OnImageLoad a1 a2 c)) = do
   record ["image_", jsInt a1, ".onload = function() {", evalScript uniqId a2, "};"]
   eval uniqId c
@@ -283,4 +283,4 @@ eval uniqId (Free (Translate a1 a2 c)) = do
   record [fromText uniqId, "Ctx.translate(", jsDouble a1, comma, jsDouble a2, ");"]
   eval uniqId c
 
-eval uniqId (Pure x) = return x
+eval _ (Pure x) = return x
