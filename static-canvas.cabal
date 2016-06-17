@@ -22,7 +22,7 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
-  ghc-options:         -Wall -rtsopts -O2
+  ghc-options:         -Wall
   exposed-modules:     Graphics.Static
                        Graphics.Static.ColorNames
   other-modules:       Graphics.Static.Types
