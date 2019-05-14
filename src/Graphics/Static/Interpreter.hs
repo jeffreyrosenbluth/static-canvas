@@ -167,6 +167,10 @@ eval uniqId freeCanvas = go freeCanvas
         record [fromText uniqId, "Ctx.lineCap = ('", jsLineCap a1, "');"]
         go c
 
+      Free (LineDash as c) -> do
+        record [fromText uniqId, "Ctx.setLineDash(", jsListDouble as, ");"]
+        go c
+
       Free (LineJoin a1 c) -> do
         record [fromText uniqId, "Ctx.lineJoin = ('", jsLineJoin a1, "');"]
         go c

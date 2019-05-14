@@ -49,6 +49,7 @@ data Canvas r
   | GlobalAlpha !Double r
   | GlobalCompositeOperation CompositeOperation r
   | LineCap LineCapStyle r
+  | LineDash ![Double] r
   | LineJoin LineJoinStyle r
   | LineTo !Double !Double r
   | LineWidth !Double r

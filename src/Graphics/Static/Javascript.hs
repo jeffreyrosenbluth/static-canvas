@@ -20,6 +20,7 @@ module Graphics.Static.Javascript
   , jsStyle
   , jsLineCap
   , jsLineJoin
+  , jsListDouble
   , jsTextAlign
   , jsTextBaseline
   , jsRepeat
@@ -27,15 +28,15 @@ module Graphics.Static.Javascript
   , comma
   ) where
 
-import Control.Monad.Writer
 import Data.Double.Conversion.Text (toFixed)
+import Data.List                   (foldl1')
 import Data.Text                   (pack)
 import Data.Text.Lazy.Builder      (Builder, fromText, singleton)
 import Graphics.Static.Types
 
 build :: Show a => a -> Builder
-build = fromText .pack . show
-   
+build = fromText . pack . show
+
 comma :: Builder
 comma = singleton ','
 
@@ -51,6 +52,12 @@ jsInt = fromText . pack . show
 
 jsDouble :: Double -> Builder
 jsDouble = fromText . toFixed 4
+
+jsListDouble :: [Double] -> Builder
+jsListDouble [] = "[]"
+jsListDouble ds = "[" <> foldl1' combine (jsDouble <$> ds) <> "]"
+  where
+    combine a b = a <> ", " <> b
 
 jsColor :: Color -> Builder
 jsColor (Hex t)        = quote . fromText $ t

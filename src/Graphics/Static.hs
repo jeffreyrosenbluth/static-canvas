@@ -15,7 +15,7 @@
 -- >
 -- > import Graphics.Static
 -- > import Graphics.Static.ColorNames
--- > 
+-- >
 -- > text :: CanvasFree ()
 -- > text = do
 -- >   font "italic 60pt Calibri"
@@ -23,9 +23,9 @@
 -- >   strokeStyle blue
 -- >   fillStyle goldenrod
 -- >   textBaseline TextBaselineMiddle
--- >   strokeText "Hello" 25 100 
+-- >   strokeText "Hello" 25 100
 -- >   fillText "Hello static-canvas!" 25 100
--- > 
+-- >
 -- > main :: IO ()
 -- > main = writeCanvasDoc "example.html" 650 300 text
 --
@@ -63,6 +63,7 @@ module Graphics.Static
   , lineWidth
   , lineCap
   , lineJoin
+  , lineDash
   , miterLimit
   , LineCapStyle(..)
   , LineJoinStyle(..)
@@ -122,7 +123,7 @@ import Data.Monoid
 import Prelude                     hiding (writeFile)
 import Data.Text                   (Text)
 import Data.Text.Lazy.Builder      (Builder, toLazyText, fromText)
-import Data.Text.Lazy.IO           (writeFile) 
+import Data.Text.Lazy.IO           (writeFile)
 import Graphics.Static.Interpreter
 import Graphics.Static.Javascript
 import Graphics.Static.Types
@@ -258,6 +259,9 @@ globalCompositeOperation a1 = liftF $ GlobalCompositeOperation a1 ()
 lineCap :: LineCapStyle -> CanvasFree ()
 lineCap a1 = liftF $ LineCap a1 ()
 
+lineDash :: [Double] -> CanvasFree ()
+lineDash ds = liftF $ LineDash ds ()
+
 lineJoin :: LineJoinStyle -> CanvasFree ()
 lineJoin a1 = liftF $ LineJoin a1 ()
 
@@ -336,7 +340,7 @@ strokeText a1 a2 a3 = liftF $ StrokeText a1 a2 a3 ()
 
 textAlign :: TextAlignStyle -> CanvasFree ()
 textAlign a1 = liftF $ TextAlign a1 ()
-                 
+
 textBaseline :: TextBaselineStyle -> CanvasFree ()
 textBaseline a1 = liftF $ TextBaseline a1 ()
 
