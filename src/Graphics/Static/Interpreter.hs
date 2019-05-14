@@ -131,6 +131,14 @@ eval uniqId freeCanvas = go freeCanvas
                , jsDouble a8, comma, jsDouble a9, ");"]
         go c
 
+      Free (Ellipse a1 a2 a3 a4 a5 a6 a7 a8 c) -> do
+        record [fromText uniqId, "Ctx.ellipse(", jsDouble a1, comma
+               , jsDouble a2, comma, jsDouble a3, comma
+               , jsDouble a4, comma, jsDouble a5, comma
+               , jsDouble a6, comma, jsDouble a7, comma
+               , jsBool a8, ");"]
+        go c
+
       Free (Fill c) -> do
         record [fromText uniqId, "Ctx.fill();"]
         go c

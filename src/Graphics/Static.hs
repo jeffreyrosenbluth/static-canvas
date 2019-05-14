@@ -59,6 +59,7 @@ module Graphics.Static
   , arcTo
   , arc
   , rect
+  , ellipse
    -- ** Line styles
   , lineWidth
   , lineCap
@@ -234,6 +235,10 @@ drawImageCrop :: Int -> Double -> Double -> Double -> Double -> Double
                      -> Double -> Double -> Double -> CanvasFree ()
 drawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9
   = liftF $ DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 ()
+
+ellipse :: Double -> Double -> Double -> Double -> Double -> Double -> Double
+        -> Bool -> CanvasFree ()
+ellipse a1 a2 a3 a4 a5 a6 a7 a8 = liftF $ Ellipse a1 a2 a3 a4 a5 a6 a7 a8 ()
 
 fill :: CanvasFree ()
 fill = liftF $ Fill ()
