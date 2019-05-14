@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
+{-# LANGUAGE StrictData #-}
 
 -------------------------------------------------------------------------------
 -- |
@@ -27,71 +28,71 @@ newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
 type CanvasFree = F Canvas
 
 data Canvas r
-  = AddColorStop !Double Color Style r
-  | Arc !Double !Double !Double !Double !Double !Bool r
-  | ArcTo !Double !Double !Double !Double !Double r
+  = AddColorStop Double Color Style r
+  | Arc Double Double Double Double Double Bool r
+  | ArcTo Double Double Double Double Double r
   | BeginPath r
-  | BezierCurveTo !Double !Double !Double !Double !Double !Double r
-  | ClearRect !Double !Double !Double !Double r
+  | BezierCurveTo Double Double Double Double Double Double r
+  | ClearRect Double Double Double Double r
   | Clip r
   | ClosePath r
-  | CreateLinearGradient !Double !Double !Double !Double (Style -> r)
-  | CreatePattern !Int RepeatStyle (Style -> r)
-  | CreateRadialGradient !Double !Double !Double !Double !Double !Double (Style -> r)
-  | DrawImageAt !Int !Double !Double r
-  | DrawImageSize !Int !Double !Double !Double !Double r
-  | DrawImageCrop !Int !Double !Double !Double !Double !Double !Double !Double !Double r
-  | Ellipse !Double !Double !Double !Double !Double !Double !Double !Bool r
+  | CreateLinearGradient Double Double Double Double (Style -> r)
+  | CreatePattern Int RepeatStyle (Style -> r)
+  | CreateRadialGradient Double Double Double Double Double Double (Style -> r)
+  | DrawImageAt Int Double Double r
+  | DrawImageSize Int Double Double Double Double r
+  | DrawImageCrop Int Double Double Double Double Double Double Double Double r
+  | Ellipse Double Double Double Double Double Double Double Bool r
   | Fill r
-  | FillRect !Double !Double !Double !Double r
+  | FillRect Double Double Double Double r
   | FillStyle Style r
-  | FillText Text !Double !Double r
+  | FillText Text Double Double r
   | Font Text r
-  | GlobalAlpha !Double r
+  | GlobalAlpha Double r
   | GlobalCompositeOperation CompositeOperation r
   | LineCap LineCapStyle r
-  | LineDash ![Double] r
+  | LineDash [Double] r
   | LineJoin LineJoinStyle r
-  | LineTo !Double !Double r
-  | LineWidth !Double r
-  | MiterLimit !Double r
-  | MoveTo !Double !Double r
+  | LineTo Double Double r
+  | LineWidth Double r
+  | MiterLimit Double r
+  | MoveTo Double Double r
   | NewImage Text (Int -> r)
-  | OnImageLoad !Int (CanvasFree ()) r
-  | QuadraticCurveTo !Double !Double !Double !Double r
-  | Rect !Double !Double !Double !Double r
+  | OnImageLoad Int (CanvasFree ()) r
+  | QuadraticCurveTo Double Double Double Double r
+  | Rect Double Double Double Double r
   | Restore r
-  | Rotate !Double r
+  | Rotate Double r
   | Save r
-  | Scale !Double !Double r
-  | SetTransform !Double !Double !Double !Double !Double !Double r
-  | ShadowBlur !Double r
+  | Scale Double Double r
+  | SetTransform Double Double Double Double Double Double r
+  | ShadowBlur Double r
   | ShadowColor Color r
-  | ShadowOffsetX !Double r
-  | ShadowOffsetY !Double r
+  | ShadowOffsetX Double r
+  | ShadowOffsetY Double r
   | Stroke r
-  | StrokeRect !Double !Double !Double !Double r
+  | StrokeRect Double Double Double Double r
   | StrokeStyle Style r
-  | StrokeText Text !Double !Double r
+  | StrokeText Text Double Double r
   | TextAlign TextAlignStyle r
   | TextBaseline TextBaselineStyle r
-  | Transform !Double !Double !Double !Double !Double !Double r
-  | Translate !Double !Double r
+  | Transform Double Double Double Double Double Double r
+  | Translate Double Double r
     deriving Functor
 
 data Color
   = Hex  Text
-  | RGB  !Int !Int !Int
-  | RGBA !Int !Int !Int !Double
+  | RGB  Int Int Int
+  | RGBA Int Int Int Double
 
 data Gradient
-  = LG !Int
-  | RG !Int
+  = LG Int
+  | RG Int
 
 data Style
   = ColorStyle Color
   | GradientStyle Gradient
-  | PatternStyle !Int
+  | PatternStyle Int
 
 data LineCapStyle
   = LineCapButt

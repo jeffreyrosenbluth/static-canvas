@@ -48,19 +48,19 @@ eval uniqId freeCanvas = go freeCanvas
     go :: Free Canvas a -> Script a
     go = \case
       Free (AddColorStop a1 a2 a3 c) -> do
-        record [jsStyle a3, ".addColorStop("
+        record [ jsStyle a3, ".addColorStop("
                , jsDouble a1, comma, jsColor a2, ");"]
         go c
 
       Free (Arc a1 a2 a3 a4 a5 a6 c) -> do
-        record [fromText uniqId, "Ctx.arc("
+        record [ fromText uniqId, "Ctx.arc("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, jsBool a6  , ");"]
         go c
 
       Free (ArcTo a1 a2 a3 a4 a5 c) -> do
-        record [fromText uniqId, "Ctx.arcTo("
+        record [ fromText uniqId, "Ctx.arcTo("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, ");"]
@@ -71,14 +71,14 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (BezierCurveTo a1 a2 a3 a4 a5 a6 c) -> do
-        record [fromText uniqId, "Ctx.bezierCurveTo("
+        record [ fromText uniqId, "Ctx.bezierCurveTo("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, jsDouble a6, ");"]
         go c
 
       Free (ClearRect a1 a2 a3 a4 c) -> do
-        record [fromText uniqId, "Ctx.clearRect("
+        record [ fromText uniqId, "Ctx.clearRect("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, ");"]
         go c
@@ -93,38 +93,41 @@ eval uniqId freeCanvas = go freeCanvas
 
       Free (CreateLinearGradient a1 a2 a3 a4 k) -> do
         i <- inc
-        record ["var gradient_", jsInt i, " = ", fromText uniqId, "Ctx.createLinearGradient("
+        record [ "var gradient_", jsInt i, " = ", fromText uniqId
+               , "Ctx.createLinearGradient("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, ");"]
         go $ k (GradientStyle (LG i))
 
       Free (CreatePattern a1 a2 k) -> do
         i <- inc
-        record ["var pattern_", jsInt i, " = ", fromText uniqId, "Ctx.createPattern(image_"
+        record [ "var pattern_", jsInt i, " = ", fromText uniqId
+               , "Ctx.createPattern(image_"
                , jsInt a1, comma, jsRepeat a2, ");"]
         go $ k (PatternStyle i)
 
       Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k) -> do
         i <- inc
-        record ["var gradient_", jsInt i, " = ", fromText uniqId, "Ctx.createRadialGradient("
+        record [ "var gradient_", jsInt i, " = ", fromText uniqId
+               , "Ctx.createRadialGradient("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, jsDouble a6, ");"]
         go $ k (GradientStyle (RG i))
 
       Free (DrawImageAt a1 a2 a3 c) -> do
-        record [fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
                , jsDouble a2, comma, jsDouble a3, ");"]
         go c
 
       Free (DrawImageSize a1 a2 a3 a4 a5 c) -> do
-        record [fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
                , jsDouble a2, comma, jsDouble a3, comma
                , jsDouble a4, comma, jsDouble a5, ");"]
         go c
 
       Free (DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 c) -> do
-        record [fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
                , jsDouble a2, comma, jsDouble a3, comma
                , jsDouble a4, comma, jsDouble a5, comma
                , jsDouble a6, comma, jsDouble a7, comma
@@ -132,7 +135,7 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (Ellipse a1 a2 a3 a4 a5 a6 a7 a8 c) -> do
-        record [fromText uniqId, "Ctx.ellipse(", jsDouble a1, comma
+        record [ fromText uniqId, "Ctx.ellipse(", jsDouble a1, comma
                , jsDouble a2, comma, jsDouble a3, comma
                , jsDouble a4, comma, jsDouble a5, comma
                , jsDouble a6, comma, jsDouble a7, comma
@@ -140,11 +143,11 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (Fill c) -> do
-        record [fromText uniqId, "Ctx.fill();"]
+        record [ fromText uniqId, "Ctx.fill();"]
         go c
 
       Free (FillRect a1 a2 a3 a4 c) -> do
-        record [fromText uniqId, "Ctx.fillRect("
+        record [ fromText uniqId, "Ctx.fillRect("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, ");"]
         go c
@@ -154,8 +157,8 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (FillText a1 a2 a3 c) -> do
-        record [fromText uniqId, "Ctx.fillText('", fromText a1, singleton '\'', comma
-               , jsDouble a2, comma
+        record [ fromText uniqId, "Ctx.fillText('", fromText a1
+               , singleton '\'', comma , jsDouble a2, comma
                , jsDouble a3, ");"]
         go c
 
@@ -168,7 +171,8 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (GlobalCompositeOperation a1 c) -> do
-        record [fromText uniqId, "Ctx.globalCompositeOperation = ('", jsComposite a1, "');"]
+        record [ fromText uniqId, "Ctx.globalCompositeOperation = ('"
+               , jsComposite a1, "');"]
         go c
 
       Free (LineCap a1 c) -> do
@@ -184,7 +188,8 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (LineTo a1 a2 c) -> do
-        record [fromText uniqId, "Ctx.lineTo(", jsDouble a1, comma, jsDouble a2, ");"]
+        record [ fromText uniqId, "Ctx.lineTo(", jsDouble a1, comma
+               , jsDouble a2, ");"]
         go c
 
       Free (LineWidth a1 c) -> do
@@ -196,30 +201,32 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (MoveTo a1 a2 c) -> do
-        record [fromText uniqId, "Ctx.moveTo(", jsDouble a1, comma, jsDouble a2, ");"]
+        record [ fromText uniqId, "Ctx.moveTo(", jsDouble a1, comma
+               , jsDouble a2, ");"]
         go c
 
       Free (NewImage a1 k) -> do
         i <- inc
-        record ["var image_", jsInt i, " = new Image(); image_"
+        record [ "var image_", jsInt i, " = new Image(); image_"
                , jsInt i, ".src = ('", fromText a1, "');"]
         go (k i)
 
       Free (OnImageLoad a1 a2 c) -> do
-        record ["image_", jsInt a1, ".onload = function() {", evalScript uniqId a2, "};"]
+        record [ "image_", jsInt a1, ".onload = function() {"
+               , evalScript uniqId a2, "};"]
         go c
 
       Free (QuadraticCurveTo a1 a2 a3 a4 c) -> do
-        record [fromText uniqId, "Ctx.quadraticCurveTo("
+        record [ fromText uniqId, "Ctx.quadraticCurveTo("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, ");"]
         go c
 
       Free (Rect a1 a2 a3 a4 c) -> do
-        record [fromText uniqId, "Ctx.rect(", jsDouble a1, comma
-                           , jsDouble a2, comma
-                           , jsDouble a3, comma
-                           , jsDouble a4, ");"]
+        record [ fromText uniqId, "Ctx.rect(", jsDouble a1, comma
+               , jsDouble a2, comma
+               , jsDouble a3, comma
+               , jsDouble a4, ");"]
         go c
 
       Free (Restore c) -> do
@@ -235,11 +242,12 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (Scale a1 a2 c) -> do
-        record [fromText uniqId, "Ctx.scale(", jsDouble a1, comma, jsDouble a2, ");"]
+        record [fromText uniqId, "Ctx.scale(", jsDouble a1, comma
+               , jsDouble a2, ");"]
         go c
 
       Free (SetTransform a1 a2 a3 a4 a5 a6 c) -> do
-        record [fromText uniqId, "Ctx.setTransform("
+        record [ fromText uniqId, "Ctx.setTransform("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, jsDouble a6, ");"]
@@ -266,7 +274,7 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (StrokeRect a1 a2 a3 a4 c) -> do
-        record [fromText uniqId, "Ctx.strokeRect("
+        record [ fromText uniqId, "Ctx.strokeRect("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, ");"]
         go c
@@ -276,8 +284,9 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (StrokeText a1 a2 a3 c) -> do
-        record [fromText uniqId, "Ctx.strokeText('", fromText a1, singleton '\''
-               , comma, jsDouble a2, comma, jsDouble a3, ");"]
+        record [ fromText uniqId, "Ctx.strokeText('", fromText a1
+               , singleton '\'' , comma, jsDouble a2, comma
+               , jsDouble a3, ");"]
         go c
 
       Free (TextAlign a1 c) -> do
@@ -285,18 +294,20 @@ eval uniqId freeCanvas = go freeCanvas
         go c
 
       Free (TextBaseline a1 c) -> do
-        record [fromText uniqId, "Ctx.textBaseline = ('", jsTextBaseline a1, "');"]
+        record [ fromText uniqId, "Ctx.textBaseline = ('"
+               , jsTextBaseline a1, "');"]
         go c
 
       Free (Transform a1 a2 a3 a4 a5 a6 c) -> do
-        record [fromText uniqId, "Ctx.transform("
+        record [ fromText uniqId, "Ctx.transform("
                , jsDouble a1, comma, jsDouble a2, comma
                , jsDouble a3, comma, jsDouble a4, comma
                , jsDouble a5, comma, jsDouble a6, ");"]
         go c
 
       Free (Translate a1 a2 c) -> do
-        record [fromText uniqId, "Ctx.translate(", jsDouble a1, comma, jsDouble a2, ");"]
+        record [ fromText uniqId, "Ctx.translate(", jsDouble a1, comma
+               , jsDouble a2, ");"]
         go c
 
       Pure x -> return x
