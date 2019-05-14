@@ -15,7 +15,6 @@
 
 module Graphics.Static.Types where
 
-import Control.Applicative
 import Control.Monad.Free.Church (F)
 import Control.Monad.State
 import Control.Monad.Writer
@@ -101,14 +100,14 @@ data LineJoinStyle
   = LineJoinMiter
   | LineJoinRound
   | LineJoinBevel
-    
+
 data TextAlignStyle
   = TextAlignStart
   | TextAlignEnd
   | TextAlignCenter
   | TextAlignLeft
   | TextAlignRight
-    
+
 data TextBaselineStyle
   = TextBaselineTop
   | TextBaselineHanging
