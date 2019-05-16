@@ -1,6 +1,7 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE LambdaCase        #-}
-
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RankNTypes        #-}
 -------------------------------------------------------------------------------
 -- |
 -- Module      :  Graphics.Static.Interpreter
@@ -17,7 +18,7 @@ module Graphics.Static.Interpreter
   ) where
 
 import Control.Monad.Free         (Free(..))
-import Control.Monad.Free.Church  (fromF)
+import Control.Monad.Free.Church
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.Text                  (Text)
@@ -28,8 +29,10 @@ import Graphics.Static.Types
 -- | Evaluate a static-canvas program and return the javascript code in a 'Builder'.
 --   The first parameter should be a unique identifier to avoid name clashes with
 --   other canvas elements in the html document.
-evalScript :: Text -> CanvasFree a -> Builder
-evalScript t c = (evalState . execWriterT . runScript . eval t . fromF) c 0
+evalScript :: Text -> MFC a -> Builder
+evalScript t mfc = (evalState . execWriterT . runScript . eval t) fc 0
+  where
+    fc = improve mfc
 
 record :: [Builder] -> Script ()
 record = tell . mconcat

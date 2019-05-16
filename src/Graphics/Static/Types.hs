@@ -1,7 +1,9 @@
 {-# LANGUAGE DeriveFunctor              #-}
+{-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
-{-# LANGUAGE StrictData #-}
+{-# LANGUAGE RankNTypes                 #-}
+{-# LANGUAGE StrictData                 #-}
 
 -------------------------------------------------------------------------------
 -- |
@@ -16,7 +18,7 @@
 
 module Graphics.Static.Types where
 
-import Control.Monad.Free.Church (F)
+import Control.Monad.Free.Class
 import Control.Monad.State
 import Control.Monad.Writer
 import Data.Text                (Text)
@@ -25,7 +27,8 @@ import Data.Text.Lazy.Builder   (Builder)
 newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
   deriving (Functor, Applicative, Monad, MonadWriter Builder, MonadState Int)
 
-type CanvasFree = F Canvas
+-- | MonadFree Canvas
+type MFC a = (forall m. MonadFree Canvas m => m a)
 
 data Canvas r
   = AddColorStop Double Color Style r
@@ -58,7 +61,7 @@ data Canvas r
   | MiterLimit Double r
   | MoveTo Double Double r
   | NewImage Text (Int -> r)
-  | OnImageLoad Int (CanvasFree ()) r
+  | OnImageLoad Int (MFC ()) r
   | QuadraticCurveTo Double Double Double Double r
   | Rect Double Double Double Double r
   | Restore r
