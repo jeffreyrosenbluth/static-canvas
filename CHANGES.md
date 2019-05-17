@@ -3,18 +3,18 @@
 
 - Refactor to use Church encoding properly. As per
   https://www.reddit.com/r/haskell/comments/3d8j1c/how_do_i_use_the_church_encoding_for_free_monads/
-- Add elipse
-- Add lineDash
+- Add `elipse`
+- Add `lineDash`
 
 0.2.0.3 (17 June 2016)
 ---------------------
 
-- Allow 'base-4.9'
+- Allow `base-4.9`
 
 0.2.0.2 (9 July 2015)
 ---------------------
 
-- Allow 'free-4.12.1'
+- Allow `free-4.12.1`
 
 0.2 (13 Feb 2015)
 -----------------
