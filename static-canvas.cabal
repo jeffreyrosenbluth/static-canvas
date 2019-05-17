@@ -1,5 +1,5 @@
 name:                static-canvas
-version:             0.2.1
+version:             0.3.0
 synopsis:            DSL to generate HTML5 Canvas javascript.
 description:
   A simple DSL for writing HTML5 Canvas in haskell and converting it
