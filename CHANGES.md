@@ -1,8 +1,7 @@
 0.3.0 (19 May 2017)
 ---------------------
 
-- Refactor to use Church encoding properly. As per
-  https://www.reddit.com/r/haskell/comments/3d8j1c/how_do_i_use_the_church_encoding_for_free_monads/
+- Refactor to use `MonadFree` and `improve`.
 - Add `elipse`
 - Add `lineDash`
 
