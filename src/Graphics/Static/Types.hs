@@ -19,16 +19,14 @@
 module Graphics.Static.Types where
 
 import Control.Monad.Free.Class
-import Control.Monad.State
-import Control.Monad.Writer
+import Control.Monad.State.Strict
 import Data.Text                (Text)
 import Data.Text.Lazy.Builder   (Builder)
 
-newtype Script a = Script {runScript :: (WriterT Builder (State Int) a)}
-  deriving (Functor, Applicative, Monad, MonadWriter Builder, MonadState Int)
+type Script a = State (Int, Builder) a
 
 -- | MonadFree Canvas
-type MFC a = (forall m. MonadFree Canvas m => m a)
+type MFC a = forall m. MonadFree Canvas m => m a
 
 data Canvas r
   = AddColorStop Double Color Style r

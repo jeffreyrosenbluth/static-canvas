@@ -17,10 +17,8 @@ module Graphics.Static.Interpreter
   ( evalScript
   ) where
 
-import Control.Monad.Free         (Free(..))
 import Control.Monad.Free.Church
-import Control.Monad.State
-import Control.Monad.Writer
+import Control.Monad.State.Strict
 import Data.Text                  (Text)
 import Data.Text.Lazy.Builder     (Builder, fromText, singleton)
 import Graphics.Static.Javascript
@@ -30,287 +28,286 @@ import Graphics.Static.Types
 --   The first parameter should be a unique identifier to avoid name clashes with
 --   other canvas elements in the html document.
 evalScript :: Text -> MFC a -> Builder
-evalScript t mfc = (evalState . execWriterT . runScript . eval t) fc 0
-  where
-    fc = improve mfc
+evalScript t mfc = snd $ (execState . eval t) mfc (0, "")
 
 record :: [Builder] -> Script ()
-record = tell . mconcat
+record bs = do
+  (n, b) <- get
+  put (n, mconcat (b:bs))
 
 inc :: Script Int
 inc = do
-  n <- get
-  put (n + 1)
+  (n, b) <- get
+  put (n + 1, b)
   return n
 
 --------------------------------------------------------------------------------
 
-eval :: Text -> Free Canvas a -> Script a
-eval uniqId freeCanvas = go freeCanvas
+eval :: Text -> F Canvas a -> Script a
+eval uniqId = iterM go
   where
-    go :: Free Canvas a -> Script a
-    go = \case
-      Free (AddColorStop a1 a2 a3 c) -> do
-        record [ jsStyle a3, ".addColorStop("
-               , jsDouble a1, comma, jsColor a2, ");"]
-        go c
+    go :: Canvas (Script a) -> Script a
+    go (AddColorStop a1 a2 a3 c) = do
+      record [ jsStyle a3, ".addColorStop("
+             , jsDouble a1, comma, jsColor a2, ");"]
+      c
 
-      Free (Arc a1 a2 a3 a4 a5 a6 c) -> do
-        record [ fromText uniqId, "Ctx.arc("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, jsBool a6  , ");"]
-        go c
+    go (Arc a1 a2 a3 a4 a5 a6 c) = do
+      record [ fromText uniqId, "Ctx.arc("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, jsBool a6  , ");"]
+      c
 
-      Free (ArcTo a1 a2 a3 a4 a5 c) -> do
-        record [ fromText uniqId, "Ctx.arcTo("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, ");"]
-        go c
+    go (ArcTo a1 a2 a3 a4 a5 c) = do
+      record [ fromText uniqId, "Ctx.arcTo("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, ");"]
+      c
 
-      Free (BeginPath c) -> do
-        record [fromText uniqId, "Ctx.beginPath();"]
-        go c
+    go (BeginPath c) = do
+      record [fromText uniqId, "Ctx.beginPath();"]
+      c
 
-      Free (BezierCurveTo a1 a2 a3 a4 a5 a6 c) -> do
-        record [ fromText uniqId, "Ctx.bezierCurveTo("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, jsDouble a6, ");"]
-        go c
+    go (BezierCurveTo a1 a2 a3 a4 a5 a6 c) = do
+      record [ fromText uniqId, "Ctx.bezierCurveTo("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, jsDouble a6, ");"]
+      c
 
-      Free (ClearRect a1 a2 a3 a4 c) -> do
-        record [ fromText uniqId, "Ctx.clearRect("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, ");"]
-        go c
+    go (ClearRect a1 a2 a3 a4 c) = do
+      record [ fromText uniqId, "Ctx.clearRect("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, ");"]
+      c
 
-      Free (Clip c) -> do
-        record [fromText uniqId, "Ctx.clip();"]
-        go c
+    go (Clip c) = do
+      record [fromText uniqId, "Ctx.clip();"]
+      c
 
-      Free (ClosePath c) -> do
-        record [fromText uniqId, "Ctx.closePath();"]
-        go c
+    go (ClosePath c) = do
+      record [fromText uniqId, "Ctx.closePath();"]
+      c
 
-      Free (CreateLinearGradient a1 a2 a3 a4 k) -> do
-        i <- inc
-        record [ "var gradient_", jsInt i, " = ", fromText uniqId
-               , "Ctx.createLinearGradient("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, ");"]
-        go $ k (GradientStyle (LG i))
+    go (CreateLinearGradient a1 a2 a3 a4 k) = do
+      i <- inc
+      record [ "var gradient_", jsInt i, " = ", fromText uniqId
+             , "Ctx.createLinearGradient("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, ");"]
+      k (GradientStyle (LG i))
 
-      Free (CreatePattern a1 a2 k) -> do
-        i <- inc
-        record [ "var pattern_", jsInt i, " = ", fromText uniqId
-               , "Ctx.createPattern(image_"
-               , jsInt a1, comma, jsRepeat a2, ");"]
-        go $ k (PatternStyle i)
+    go (CreatePattern a1 a2 k) = do
+      i <- inc
+      record [ "var pattern_", jsInt i, " = ", fromText uniqId
+             , "Ctx.createPattern(image_"
+             , jsInt a1, comma, jsRepeat a2, ");"]
+      k (PatternStyle i)
 
-      Free (CreateRadialGradient a1 a2 a3 a4 a5 a6 k) -> do
-        i <- inc
-        record [ "var gradient_", jsInt i, " = ", fromText uniqId
-               , "Ctx.createRadialGradient("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, jsDouble a6, ");"]
-        go $ k (GradientStyle (RG i))
+    go (CreateRadialGradient a1 a2 a3 a4 a5 a6 k) = do
+      i <- inc
+      record [ "var gradient_", jsInt i, " = ", fromText uniqId
+             , "Ctx.createRadialGradient("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, jsDouble a6, ");"]
+      k (GradientStyle (RG i))
 
-      Free (DrawImageAt a1 a2 a3 c) -> do
-        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
-               , jsDouble a2, comma, jsDouble a3, ");"]
-        go c
+    go (DrawImageAt a1 a2 a3 c) = do
+      record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+             , jsDouble a2, comma, jsDouble a3, ");"]
+      c
 
-      Free (DrawImageSize a1 a2 a3 a4 a5 c) -> do
-        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
-               , jsDouble a2, comma, jsDouble a3, comma
-               , jsDouble a4, comma, jsDouble a5, ");"]
-        go c
+    go (DrawImageSize a1 a2 a3 a4 a5 c) = do
+      record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+             , jsDouble a2, comma, jsDouble a3, comma
+             , jsDouble a4, comma, jsDouble a5, ");"]
+      c
 
-      Free (DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 c) -> do
-        record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
-               , jsDouble a2, comma, jsDouble a3, comma
-               , jsDouble a4, comma, jsDouble a5, comma
-               , jsDouble a6, comma, jsDouble a7, comma
-               , jsDouble a8, comma, jsDouble a9, ");"]
-        go c
+    go (DrawImageCrop a1 a2 a3 a4 a5 a6 a7 a8 a9 c) = do
+      record [ fromText uniqId, "Ctx.drawImage(image_", jsInt a1, comma
+             , jsDouble a2, comma, jsDouble a3, comma
+             , jsDouble a4, comma, jsDouble a5, comma
+             , jsDouble a6, comma, jsDouble a7, comma
+             , jsDouble a8, comma, jsDouble a9, ");"]
+      c
 
-      Free (Ellipse a1 a2 a3 a4 a5 a6 a7 a8 c) -> do
-        record [ fromText uniqId, "Ctx.ellipse(", jsDouble a1, comma
-               , jsDouble a2, comma, jsDouble a3, comma
-               , jsDouble a4, comma, jsDouble a5, comma
-               , jsDouble a6, comma, jsDouble a7, comma
-               , jsBool a8, ");"]
-        go c
+    go (Ellipse a1 a2 a3 a4 a5 a6 a7 a8 c) = do
+      record [ fromText uniqId, "Ctx.ellipse(", jsDouble a1, comma
+             , jsDouble a2, comma, jsDouble a3, comma
+             , jsDouble a4, comma, jsDouble a5, comma
+             , jsDouble a6, comma, jsDouble a7, comma
+             , jsBool a8, ");"]
+      c
 
-      Free (Fill c) -> do
-        record [ fromText uniqId, "Ctx.fill();"]
-        go c
+    go (Fill c) = do
+      record [ fromText uniqId, "Ctx.fill();"]
+      c
 
-      Free (FillRect a1 a2 a3 a4 c) -> do
-        record [ fromText uniqId, "Ctx.fillRect("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, ");"]
-        go c
+    go (FillRect a1 a2 a3 a4 c) = do
+      record [ fromText uniqId, "Ctx.fillRect("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, ");"]
+      c
 
-      Free (FillStyle a1 c) -> do
-        record [fromText uniqId, "Ctx.fillStyle = (", jsStyle a1, ");"]
-        go c
+    go (FillStyle a1 c) = do
+      record [fromText uniqId, "Ctx.fillStyle = (", jsStyle a1, ");"]
+      c
 
-      Free (FillText a1 a2 a3 c) -> do
-        record [ fromText uniqId, "Ctx.fillText('", fromText a1
-               , singleton '\'', comma , jsDouble a2, comma
-               , jsDouble a3, ");"]
-        go c
+    go (FillText a1 a2 a3 c) = do
+      record [ fromText uniqId, "Ctx.fillText('", fromText a1
+             , singleton '\'', comma , jsDouble a2, comma
+             , jsDouble a3, ");"]
+      c
 
-      Free (Font a1 c) -> do
-        record [fromText uniqId, "Ctx.font = ('", fromText a1, "');"]
-        go c
+    go (Font a1 c) = do
+      record [fromText uniqId, "Ctx.font = ('", fromText a1, "');"]
+      c
 
-      Free (GlobalAlpha a1 c) -> do
-        record [fromText uniqId, "Ctx.globalAlpha = (", jsDouble a1, ");"]
-        go c
+    go (GlobalAlpha a1 c) = do
+      record [fromText uniqId, "Ctx.globalAlpha = (", jsDouble a1, ");"]
+      c
 
-      Free (GlobalCompositeOperation a1 c) -> do
-        record [ fromText uniqId, "Ctx.globalCompositeOperation = ('"
-               , jsComposite a1, "');"]
-        go c
+    go (GlobalCompositeOperation a1 c) = do
+      record [ fromText uniqId, "Ctx.globalCompositeOperation = ('"
+             , jsComposite a1, "');"]
+      c
 
-      Free (LineCap a1 c) -> do
-        record [fromText uniqId, "Ctx.lineCap = ('", jsLineCap a1, "');"]
-        go c
+    go (LineCap a1 c) = do
+      record [fromText uniqId, "Ctx.lineCap = ('", jsLineCap a1, "');"]
+      c
 
-      Free (LineDash as c) -> do
-        record [fromText uniqId, "Ctx.setLineDash(", jsListDouble as, ");"]
-        go c
+    go (LineDash as c) = do
+      record [fromText uniqId, "Ctx.setLineDash(", jsListDouble as, ");"]
+      c
 
-      Free (LineJoin a1 c) -> do
-        record [fromText uniqId, "Ctx.lineJoin = ('", jsLineJoin a1, "');"]
-        go c
+    go (LineJoin a1 c) = do
+      record [fromText uniqId, "Ctx.lineJoin = ('", jsLineJoin a1, "');"]
+      c
 
-      Free (LineTo a1 a2 c) -> do
-        record [ fromText uniqId, "Ctx.lineTo(", jsDouble a1, comma
-               , jsDouble a2, ");"]
-        go c
+    go (LineTo a1 a2 c) = do
+      record [ fromText uniqId, "Ctx.lineTo(", jsDouble a1, comma
+             , jsDouble a2, ");"]
+      c
 
-      Free (LineWidth a1 c) -> do
-        record [fromText uniqId, "Ctx.lineWidth = (", jsDouble a1, ");"]
-        go c
+    go (LineWidth a1 c) = do
+      record [fromText uniqId, "Ctx.lineWidth = (", jsDouble a1, ");"]
+      c
 
-      Free (MiterLimit a1 c) -> do
-        record [fromText uniqId, "Ctx.miterLimit = (", jsDouble a1, ");"]
-        go c
+    go (MiterLimit a1 c) = do
+      record [fromText uniqId, "Ctx.miterLimit = (", jsDouble a1, ");"]
+      c
 
-      Free (MoveTo a1 a2 c) -> do
-        record [ fromText uniqId, "Ctx.moveTo(", jsDouble a1, comma
-               , jsDouble a2, ");"]
-        go c
+    go (MoveTo a1 a2 c) = do
+      record [ fromText uniqId, "Ctx.moveTo(", jsDouble a1, comma
+             , jsDouble a2, ");"]
+      c
 
-      Free (NewImage a1 k) -> do
-        i <- inc
-        record [ "var image_", jsInt i, " = new Image(); image_"
-               , jsInt i, ".src = ('", fromText a1, "');"]
-        go (k i)
+    go (NewImage a1 k) = do
+      i <- inc
+      record [ "var image_", jsInt i, " = new Image(); image_"
+             , jsInt i, ".src = ('", fromText a1, "');"]
+      k i
 
-      Free (OnImageLoad a1 a2 c) -> do
-        record [ "image_", jsInt a1, ".onload = function() {"
-               , evalScript uniqId a2, "};"]
-        go c
+    go (OnImageLoad a1 a2 c) = do
+      record [ "image_", jsInt a1, ".onload = function() {"
+             , evalScript uniqId a2, "};"]
+      c
 
-      Free (QuadraticCurveTo a1 a2 a3 a4 c) -> do
-        record [ fromText uniqId, "Ctx.quadraticCurveTo("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, ");"]
-        go c
+    go (QuadraticCurveTo a1 a2 a3 a4 c) = do
+      record [ fromText uniqId, "Ctx.quadraticCurveTo("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, ");"]
+      c
 
-      Free (Rect a1 a2 a3 a4 c) -> do
-        record [ fromText uniqId, "Ctx.rect(", jsDouble a1, comma
-               , jsDouble a2, comma
-               , jsDouble a3, comma
-               , jsDouble a4, ");"]
-        go c
+    go (Rect a1 a2 a3 a4 c) = do
+      record [ fromText uniqId, "Ctx.rect(", jsDouble a1, comma
+             , jsDouble a2, comma
+             , jsDouble a3, comma
+             , jsDouble a4, ");"]
+      c
 
-      Free (Restore c) -> do
-        record [fromText uniqId, "Ctx.restore();"]
-        go c
+    go (Restore c) = do
+      record [fromText uniqId, "Ctx.restore();"]
+      c
 
-      Free (Rotate a1 c) -> do
-        record [fromText uniqId, "Ctx.rotate(", jsDouble a1, ");"]
-        go c
+    go (Rotate a1 c) = do
+      record [fromText uniqId, "Ctx.rotate(", jsDouble a1, ");"]
+      c
 
-      Free (Save c) -> do
-        record [fromText uniqId, "Ctx.save();"]
-        go c
+    go (Save c) = do
+      record [fromText uniqId, "Ctx.save();"]
+      c
 
-      Free (Scale a1 a2 c) -> do
-        record [fromText uniqId, "Ctx.scale(", jsDouble a1, comma
-               , jsDouble a2, ");"]
-        go c
+    go (Scale a1 a2 c) = do
+      record [fromText uniqId, "Ctx.scale(", jsDouble a1, comma
+             , jsDouble a2, ");"]
+      c
 
-      Free (SetTransform a1 a2 a3 a4 a5 a6 c) -> do
-        record [ fromText uniqId, "Ctx.setTransform("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, jsDouble a6, ");"]
-        go c
+    go (SetTransform a1 a2 a3 a4 a5 a6 c) = do
+      record [ fromText uniqId, "Ctx.setTransform("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, jsDouble a6, ");"]
+      c
 
-      Free (ShadowColor a1 c) -> do
-        record [fromText uniqId, "Ctx.shadowColor = ('", jsColor a1, "');"]
-        go c
+    go (ShadowColor a1 c) = do
+      record [fromText uniqId, "Ctx.shadowColor = ('", jsColor a1, "');"]
+      c
 
-      Free (ShadowBlur a1 c) -> do
-        record [fromText uniqId, "Ctx.shadowBlur = (", jsDouble a1, ");"]
-        go c
+    go (ShadowBlur a1 c) = do
+      record [fromText uniqId, "Ctx.shadowBlur = (", jsDouble a1, ");"]
+      c
 
-      Free (ShadowOffsetX a1 c) -> do
-        record [fromText uniqId, "Ctx.shadowOffsetX = (", jsDouble a1, ");"]
-        go c
+    go (ShadowOffsetX a1 c) = do
+      record [fromText uniqId, "Ctx.shadowOffsetX = (", jsDouble a1, ");"]
+      c
 
-      Free (ShadowOffsetY a1 c) -> do
-        record [fromText uniqId, "Ctx.shadowOffsetY = (", jsDouble a1, ");"]
-        go c
+    go (ShadowOffsetY a1 c) = do
+      record [fromText uniqId, "Ctx.shadowOffsetY = (", jsDouble a1, ");"]
+      c
 
-      Free (Stroke c) -> do
-        record [fromText uniqId, "Ctx.stroke();"]
-        go c
+    go (Stroke c) = do
+      record [fromText uniqId, "Ctx.stroke();"]
+      c
 
-      Free (StrokeRect a1 a2 a3 a4 c) -> do
-        record [ fromText uniqId, "Ctx.strokeRect("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, ");"]
-        go c
+    go (StrokeRect a1 a2 a3 a4 c) = do
+      record [ fromText uniqId, "Ctx.strokeRect("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, ");"]
+      c
 
-      Free (StrokeStyle a1 c) -> do
-        record [fromText uniqId, "Ctx.strokeStyle = (", jsStyle a1, ");"]
-        go c
+    go (StrokeStyle a1 c) = do
+      record [fromText uniqId, "Ctx.strokeStyle = (", jsStyle a1, ");"]
+      c
 
-      Free (StrokeText a1 a2 a3 c) -> do
-        record [ fromText uniqId, "Ctx.strokeText('", fromText a1
-               , singleton '\'' , comma, jsDouble a2, comma
-               , jsDouble a3, ");"]
-        go c
+    go (StrokeText a1 a2 a3 c) = do
+      record [ fromText uniqId, "Ctx.strokeText('", fromText a1
+             , singleton '\'' , comma, jsDouble a2, comma
+             , jsDouble a3, ");"]
+      c
 
-      Free (TextAlign a1 c) -> do
-        record [fromText uniqId, "Ctx.textAlign = ('", jsTextAlign a1, "');"]
-        go c
+    go (TextAlign a1 c) = do
+      record [fromText uniqId, "Ctx.textAlign = ('", jsTextAlign a1, "');"]
+      c
 
-      Free (TextBaseline a1 c) -> do
-        record [ fromText uniqId, "Ctx.textBaseline = ('"
-               , jsTextBaseline a1, "');"]
-        go c
+    go (TextBaseline a1 c) = do
+      record [ fromText uniqId, "Ctx.textBaseline = ('"
+             , jsTextBaseline a1, "');"]
+      c
 
-      Free (Transform a1 a2 a3 a4 a5 a6 c) -> do
-        record [ fromText uniqId, "Ctx.transform("
-               , jsDouble a1, comma, jsDouble a2, comma
-               , jsDouble a3, comma, jsDouble a4, comma
-               , jsDouble a5, comma, jsDouble a6, ");"]
-        go c
+    go (Transform a1 a2 a3 a4 a5 a6 c) = do
+      record [ fromText uniqId, "Ctx.transform("
+             , jsDouble a1, comma, jsDouble a2, comma
+             , jsDouble a3, comma, jsDouble a4, comma
+             , jsDouble a5, comma, jsDouble a6, ");"]
+      c
 
-      Free (Translate a1 a2 c) -> do
-        record [ fromText uniqId, "Ctx.translate(", jsDouble a1, comma
-               , jsDouble a2, ");"]
-        go c
-
-      Pure x -> return x
+    go (Translate a1 a2 c) = do
+      record [ fromText uniqId, "Ctx.translate(", jsDouble a1, comma
+             , jsDouble a2, ");"]
+      c
+    --
+    -- go (Pure x) = return x
